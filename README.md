@@ -4,7 +4,7 @@ Code that goes on the base stations for the IDEAL project. Most fundamentally th
 
 ## Installation
 
-<li>git clone https://github.com/idealenergy/pi.git
+<li>git pull https://github.com/idealenergy/pi.git
 <li>npm install
 <li>node ideal_server.js
 
