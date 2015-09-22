@@ -8,7 +8,7 @@ Code that goes on the base stations for the IDEAL project. Most fundamentally th
 <li>npm install
 <li>node ideal_server.js
 
-(note all these steps should be automated!)
+Note that all these steps should be automated. It is also the case that npm install will not (currently) work because piglow fails to install - need to download it into node_modules and edit its package.json file to include a more recent version of i2c (e.g. "~0.2.0". Then run npm install in the piglow dir and then in this dir again.
 
 ## License
 
