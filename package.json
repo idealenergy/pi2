@@ -1,0 +1,26 @@
+{
+  "name": "ideal-basestation",
+  "description": "IDEAL basestation scripts",
+  "repository": {
+    "type": "git",
+    "url": "https://janekm@bitbucket.org/janekm/ideal_node.git"
+  },
+  "scripts": {
+    "start": "bash startup.sh"
+  },
+  "version": "0.0.8",
+  "dependencies": {
+    "request-json": "~0.4.10",
+    "async": "~0.9.0",
+    "node-logentries": "~0.0.2",
+    "serialport": "~1.4.2",
+    "request": "~2.21.0",
+    "loggly": "~1.0.4",
+    "enum": "~0.2.6",
+    "piglow": "~2.1.0",
+    "forever-monitor": "~1.3.0"
+  },
+  "engines": {
+      "node": "0.10.22"
+  }
+}
