@@ -5,7 +5,7 @@
 # Sys-V startup script for ideal process (JK 25/8/2015)
 
 IDEAL_PID_FILE=/var/run/ideal.pid
-IDEAL_START_COMMAND=/home/pi/idealbasestation/startup.sh
+IDEAL_START_COMMAND=/home/pi/pi/startup.sh
 # change this if you want to have a log file
 IDEAL_LOG=/dev/null
 
