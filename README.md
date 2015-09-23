@@ -8,7 +8,7 @@ Pi base station code for the IDEAL project. ideal_server.js is a node.js server 
 <li>npm install
 <li>node ideal_server.js
 
-Note that all these steps should be automated. It is also the case that npm install will not (currently) work because piglow fails to install - need to download it into node_modules and edit its package.json file to include a more recent version of i2c (e.g. "~0.2.0". Then run npm install in the piglow dir and then in this dir again.
+Note that all these steps should be automated. It is also the case that npm install will not (currently) work because piglow fails to install - need to download it into node_modules and edit its package.json file to include a more recent version of i2c (e.g. "~0.2.0"). Then run npm install in the piglow dir and then in this dir again.
 
 ## License
 
