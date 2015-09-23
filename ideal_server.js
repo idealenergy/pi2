@@ -11,7 +11,7 @@ var piGlow = require('piglow');
 var config = common.config();
 
 // This is hard-wired and not configurable because it's used in the startup script
-var IDEAL_SOFTWARE_UPGRADE_FLAG="/var/run/ideal.upgrade";
+var IDEAL_SOFTWARE_UPGRADE_FLAG="/home/pi/ideal.upgrade";
 
 if (process.getuid) {
   console.log('Current uid: ' + process.getuid());
