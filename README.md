@@ -1,6 +1,6 @@
 ## Synopsis
 
-Pi base station code for the IDEAL project. ideal_server.js is a node.js server that has two purposes: to send sensor data to the IDEAL database; to ping a server to see if there are commands that should be run on the Pi (for example to change the brightness of the LEDs on the PCB; or to update the software to the latest GIT version. There is also code that monitors the server on the Pi is running and makes it start on reboot etc.
+Pi base station code for the IDEAL project. ideal_server.js is a node.js server that has two purposes: to send sensor data to the IDEAL database; to ping a server to see if there are commands that should be run on the Pi (for example to change the brightness of the LEDs on the PCB; or to update the software to the latest GIT version). There is also code that monitors the server on the Pi is running and makes it start on reboot etc.
 
 ## Installation
 
