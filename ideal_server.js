@@ -87,8 +87,8 @@ var homeID="unknown";
 
 console.log(config.IDEALServer);
 console.log(config.JSONbuffersize);
-var IDEALJSONClient = request.newClient(config.IDEALServer);
-var PingClient = request.newClient("http://"+config.CommandServer+":"+config.CommandPort);
+var IDEALJSONClient = request.createClient(config.IDEALServer);
+var PingClient = request.createClient("http://"+config.CommandServer+":"+config.CommandPort);
 //var IDEALJSONClient = request(config.IDEALServer);
 
 var serialport = require("serialport")
@@ -100,6 +100,12 @@ var serialPort = new SerialPort(config.SerialPort, {
 
 function sendJSON(data) {
   if (data && data.home_id) {
+    // set the command prompt so that remote logins can see what pi they're on
+    if (homeID=="unknown") { 
+	var cmd = "sed -i 's/\\\\h/home"+data.home_id+"/g' ~/.bashrc";
+	var result=executeShellCommand(cmd); // set prompt
+        console.log(cmd);
+    }
     homeID=data.home_id;
   }  
   if (config['JSONbuffersize']) {
@@ -241,7 +247,7 @@ process.on('uncaughtException', function(err) {
 
 var PINGDELAY=5; 
 
-// execute a shell command
+// execute a shell command. 
 function executeShellCommand(command) {
     childProcess.exec(command, function (error, stdout, stderr) {
 	console.log('stdout: ' + stdout);
@@ -253,6 +259,21 @@ function executeShellCommand(command) {
         return 1;
     });
 }
+
+// execute a long running shell command returning the stdin (or null on failure)
+function executeShellCommandStdin(command) {
+    var spawn = childProcess.exec(command, {stdio: [ 'pipe', 0, 0 ] }, function (error, stdout, stderr) {
+	console.log('stdout: ' + stdout);
+	console.log('stderr: ' + stderr);
+	if (error !== null) {
+	    console.log('spawn error: ' + error);
+	    return null
+	}
+    });
+    return spawn.stdin;
+}
+
+var stdin=null;
 
 var id = setInterval(function() {
      console.log("Hello from "+homeID);
@@ -269,10 +290,13 @@ var id = setInterval(function() {
              case "login":
 		var comm = "ssh -R "+ config.SSHtunnelPort + ":localhost:22 " + config.SSHtunnelUser + "@" + config.CommandServer;
 		console.log(comm);
-		var result=executeShellCommand(comm);
+		stdin=executeShellCommandStdin(comm);
                 break;
              case "logout":
-		// Blah
+		if (stdin) {
+		  stdin.end('close\n');
+		}
+		stdin=null;
 		break;
              case "led":
 		var val = res.body.value;
