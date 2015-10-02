@@ -288,7 +288,7 @@ var id = setInterval(function() {
            console.log("Ping response "+ command);
 	   switch (command) {
              case "login":
-		var comm = "ssh -R "+ config.SSHtunnelPort + ":localhost:22 " + config.SSHtunnelUser + "@" + config.CommandServer;
+		var comm = "ssh -p "+ config.SSHtunnelPort + " -R 3100:localhost:22 " + config.SSHtunnelUser + "@" + config.CommandServer;
 		console.log(comm);
 		stdin=executeShellCommandStdin(comm);
                 break;
