@@ -17,6 +17,7 @@ IDEAL_PID_FILE=/var/run/ideal.pid
 IDEAL_START_COMMAND=/home/pi/pi/startup.sh
 # change this if you want to have a log file
 IDEAL_LOG=/dev/null
+# don't have a log file for production - only for debug
 #IDEAL_LOG=/home/pi/pi/LOG
 
 # Simple start and stop commands for ideal process
