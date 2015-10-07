@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from datetime import datetime
 import json
 import os
@@ -5,6 +6,7 @@ import serial
 from struct import unpack
 import time
 import urllib2
+import sys
 
 ENV_FILE = './env.json'
 
@@ -210,18 +212,24 @@ def decode(packet):
 print "Heat meter receiver"
 print
 
+# Decide what USB port we're reading (JK)
+usbtty = "ttyUSB0"
+if len(sys.argv) == 2:
+   if sys.argv[1] == "-input":
+      usbtty=sys.argv[2]
+
 # Load environment config file
 with file(ENV_FILE) as f:
 	env = json.loads(f.read())
 
-NODE_ENV = 'production'
+NODE_ENV = 'development'
 if 'NODE_ENV' in os.environ:
 	NODE_ENV = os.environ['NODE_ENV']
 
 config = env[NODE_ENV]
 
 print "Loaded config: " + NODE_ENV
-print "  Home ID: " + str(config['home_id'])
+#print "  Home ID: " + str(config['home_id'])
 print "  Server:  " + config['IDEALServer']
 print
 
@@ -229,9 +237,12 @@ print
 # We're leaving it in it's default state
 # It defaults to T mode and just spits out full packets
 ser = serial.Serial(
-	port = '/dev/tty.usbserial-5300070A',
+	port = '/dev/'+usbtty,
 	baudrate = 9600
 )
+
+print "  Port:  /dev/" + usbtty
+
 
 while True:
 	out = ''
@@ -246,7 +257,7 @@ while True:
 	if packet:
 		result = decode(out)
 		if result != False:
-			result['home_id'] = config['home_id']
+#			result['home_id'] = config['home_id']
 			print result
 			req = urllib2.Request(config['IDEALServer'] + 'heatmeterreading')
 			req.add_header('Content-Type', 'application/json')
