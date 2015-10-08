@@ -20,7 +20,8 @@ upgradeflag=/home/pi/ideal.upgrade
 if [ -f $upgradeflag ]; then
     # grab software
     echo "Requesting software from git repository..."
-    git pull
+    git fetch --all
+    git reset --hard origin/master
     sleep 5
     sudo rm $upgradeflag
 fi
