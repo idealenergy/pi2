@@ -4,7 +4,7 @@
 # always just report that the service(s) is(are) already running.
 my @services = ("ideal");
 for my $service (@services) {
-  `sudo service $service start`;
+  print `sudo service $service start`;
 }
 
 # Start processes to gather "other forms of data" - for example
