@@ -99,10 +99,13 @@ var serialPort = new SerialPort(config.SerialPort, {
 });
 
 function sendJSON(data) {
-  if (data && data.home_id) {
+  if (data && data.home_id && !(data.home_id===undefined) && !(data.home_id=='undefined')) {
     // set the command prompt so that remote logins can see what pi they're on
     if (homeID=="unknown") { 
 	var cmd = "sed -i 's/\\\\h/home"+data.home_id+"/g' ~/.bashrc";
+	var result=executeShellCommand(cmd); // set prompt
+        console.log(cmd);
+	cmd = "echo \""+data.home_id+"\" > ~/home_id";
 	var result=executeShellCommand(cmd); // set prompt
         console.log(cmd);
     }
