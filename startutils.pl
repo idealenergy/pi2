@@ -10,12 +10,11 @@ for my $service (@services) {
 # Start processes to gather "other forms of data" - for example
 # CurrentCost data; HeatMeter data
 my @knownDataProviders = ("CurrentCost", "HeatMeter");
-my %processes = ("CurrentCost" => "./currentcost2ideal.pl", "HeatMeter" => "./heatmeter_receive.py");
+my %processes = ("CurrentCost" => "./currentcost_receive.py", "HeatMeter" => "./heatmeter_receive.py");
 my %dmesgGrep = ("CurrentCost" => "pl2303", "HeatMeter" => "FTDI");
 
 for my $datasource (@knownDataProviders) {
-  # this likely won't work with e.g. memory sticks attached to Pi;
-  # also need to check if it works after reboot..
+  # this likely won't work with e.g. memory sticks attached to Pi
   my $resc = "dmesg | grep usb | grep attach | grep $dmesgGrep{$datasource} | tail -1";
   my $res = `$resc`; $res =~ s/\s*\n$//; $res =~s/^.*\s+//;
   my $commname = $processes{$datasource};
@@ -26,6 +25,6 @@ for my $datasource (@knownDataProviders) {
   } else {
     my $command = "$commname -input $res";
     print "execute $command\n";
-    system("$command &");
+    system("$command > /dev/null 2>&1 &");
   }
 }
