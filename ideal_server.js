@@ -196,7 +196,8 @@ serialPort.on("open", function () {
       case 2: // BROADCAST
         break;
       case 3: // CURRENT
-        JSON_data["current"] = js_data.val0;
+        JSON_data["peak_current"] = js_data.val0;
+        JSON_data["rms_current"] = js_data.val1;
         sendJSON(JSON_data);
         break;
       case 4: // CLAMPS
