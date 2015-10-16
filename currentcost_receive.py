@@ -70,7 +70,7 @@ def sendReading(reading, call):
    req = urllib2.Request(config['IDEALServer'] + call)
    req.add_header('Content-Type', 'application/json')
    try:
-	print "Send " +reading['value']+" to "+config['IDEALServer'] + call
+	#print "Send " +reading['value']+" to "+config['IDEALServer'] + call
 	response = urllib2.urlopen(req, json.dumps(reading))
    except:
 	traceback.print_exc()
