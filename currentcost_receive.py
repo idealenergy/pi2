@@ -67,10 +67,10 @@ ser = serial.Serial(
 print "  Port:  /dev/" + usbtty
 
 def sendReading(reading, call):
-   req = urllib2.Request(config['IDEALServer'] + 'currentcostwattreading')
+   req = urllib2.Request(config['IDEALServer'] + call)
    req.add_header('Content-Type', 'application/json')
    try:
-#	   print "Send " +reading['value']+" to "+config['IDEALServer'] + 'currentcostwattreading'
+	print "Send " +reading['value']+" to "+config['IDEALServer'] + call
 	response = urllib2.urlopen(req, json.dumps(reading))
    except:
 	traceback.print_exc()
@@ -94,7 +94,7 @@ def getHomeID():
 def sendWattsReading(ts, sensor, value, channel):
    global HOME_ID
    if HOME_ID:
-	print "Electric reading from clamp or plug sensor "+HOME_ID+ "; "+value
+	print "Electric reading from clamp or plug sensor "+HOME_ID+ "; "+sensor+": "+value
 	reading = {'home_id': HOME_ID, 'sensorbox_address': sensor, 'timeinterval': 60, 'power': int(value), 'channel': channel} 
 	reading['timestamp'] = int(calendar.timegm(time.gmtime()) * 10)
 	sendReading(reading, 'currentcostwattreading')
