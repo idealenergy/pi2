@@ -88,7 +88,7 @@ var homeID="unknown";
 console.log(config.IDEALServer);
 console.log(config.JSONbuffersize);
 var IDEALJSONClient = request.createClient(config.IDEALServer);
-var PingClient = request.createClient("http://"+config.CommandServer+":"+config.CommandPort);
+var PingClient = request.createClient("https://"+config.CommandServer+":"+config.CommandPort);
 //var IDEALJSONClient = request(config.IDEALServer);
 
 var serialport = require("serialport")
