@@ -88,7 +88,7 @@ var homeID="unknown";
 console.log(config.IDEALServer);
 console.log(config.JSONbuffersize);
 var IDEALJSONClient = request.createClient(config.IDEALServer);
-var PingClient = request.createClient("https://"+config.CommandServer+":"+config.CommandPort);
+var PingClient = request.createClient(config.CommandTransport+"://"+config.CommandServer+":"+config.CommandPort);
 //var IDEALJSONClient = request(config.IDEALServer);
 
 var serialport = require("serialport")
@@ -139,7 +139,8 @@ function sendJSONbuffered(data) {
      console.log(" ...compress... ");
      zlib.deflate(JSON.stringify(JSONdata), function(err, buffer) {
        if (!err) {
-         IDEALJSONClient.post( 'jsonreadings/', buffer, function (err, res, body) {
+	 IDEALJSONClient.post( 'jsonreadings/', buffer, function (err, res, body) {
+         //IDEALJSONClient.post( 'jsonreadings/', JSONdata, function (err, res, body) {
            if(res) {
              console.log(err);
              console.log({"statusCode": res.statusCode});
@@ -285,7 +286,7 @@ var id = setInterval(function() {
       "home_id": homeID
      }
      PingClient.post( 'ping/', JSONdata, function (err, res, body) {
-       //console.log("Ping response "+ JSON.stringify(res));
+       console.log("Ping response "+ JSON.stringify(res));
        if (res!=null && res.body!=null) {
 	 var command = res.body.command;
          if (command!=null) {
