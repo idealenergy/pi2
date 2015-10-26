@@ -20,4 +20,5 @@
 # For more information see the manual pages of crontab(5) and cron(8)
 # 
 # m h  dom mon dow   command
-*/10 * * * * . $HOME/.profile; cd /home/pi/pi; perl startutils.pl > /dev/null 2>&1
+*/10 * * * * . $HOME/.profile; cd /home/pi/pi; perl startutils.pl > /dev/null 2>&1; perl util/sysinfo.pl>/home/pi/sysinfo 2&>1;
+
