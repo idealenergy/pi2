@@ -25,4 +25,4 @@ if [ -f $upgradeflag ]; then
     sleep 5
     sudo rm $upgradeflag
 fi
-/usr/local/bin/node server.js
+node server.js
