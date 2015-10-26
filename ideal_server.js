@@ -1,8 +1,9 @@
 //var request = require('request');
 var request = require('request-json');
 var async = require('async');
-var childProcess = require('child_process')
+var childProcess = require('child_process');
 var zlib = require('zlib');
+var fs = require('fs');
 
 var common = require('./common')
 
@@ -282,51 +283,59 @@ var stdin=null;
 
 var id = setInterval(function() {
      console.log("Hello from "+homeID);
-     var JSONdata = {
-      "home_id": homeID
-     }
-     PingClient.post( 'ping/', JSONdata, function (err, res, body) {
-       console.log("Ping response "+ JSON.stringify(res));
-       if (res!=null && res.body!=null) {
-	 var command = res.body.command;
-         if (command!=null) {
-           console.log("Ping response "+ command);
-	   switch (command) {
-             case "login":
-		var comm = "ssh -p "+ config.SSHtunnelPort + " -R 3100:localhost:22 " + config.SSHtunnelUser + "@" + config.CommandServer;
-		console.log(comm);
-		stdin=executeShellCommandStdin(comm);
-                break;
-             case "logout":
-		if (stdin) {
-		  stdin.end('close\n');
+     var JSONdata=[];
+     fs.readFile("/home/pi/sysinfo", function(err,data) {
+	if (err) {
+	   JSONdata={ "home_id": homeID };
+        } else {
+	   JSONdata = JSON.parse(data);
+	   JSONdata.home_id=homeID;
+	}
+
+        console.log("Ping with " + JSON.stringify(JSONdata));
+
+        PingClient.post( 'ping/', JSONdata, function (err, res, body) {
+          console.log("Ping response "+ JSON.stringify(res));
+          if (res!=null && res.body!=null) {
+	    var command = res.body.command;
+            if (command!=null) {
+		console.log("Ping response "+ command);
+		switch (command) {
+		  case "login":
+		    var comm = "ssh -p "+ config.SSHtunnelPort + " -R 3100:localhost:22 " + config.SSHtunnelUser + "@" + config.CommandServer;
+		    console.log(comm);
+		    stdin=executeShellCommandStdin(comm);
+		    break;
+		  case "logout":
+		    if (stdin) {
+			stdin.end('close\n');
+		    }
+		    stdin=null;
+		    break;
+		  case "led":
+		    var val = res.body.value;
+		    if (val==null) { val=0; }
+		    maxLEDvalue = val;
+		    break;
+		  case "restartpi":
+		    var comm = "sudo shutdown -r now";
+		    console.log(comm);
+		    var result=executeShellCommand(comm); // goodbye!
+		    break;
+		  case "softwareupdate":
+		    var comm = "sudo touch "+IDEAL_SOFTWARE_UPGRADE_FLAG;
+		    console.log(comm + "(set upgrage flag)");
+		    var result=executeShellCommand(comm); // flag
+		    comm = "sudo shutdown -r now";
+		    console.log(comm);
+		    var result=executeShellCommand(comm); // goodbye!
+		    break;
+		  default:
+		    console.log("ERROR: Cannot execute command: "+ command);
 		}
-		stdin=null;
-		break;
-             case "led":
-		var val = res.body.value;
-		if (val==null) { val=0; }
-		maxLEDvalue = val;
-		// Blah
-		break;
-             case "restartpi":
-		var comm = "sudo shutdown -r now";
-		console.log(comm);
-		var result=executeShellCommand(comm); // goodbye!
-                break;
-             case "softwareupdate":
-		var comm = "sudo touch "+IDEAL_SOFTWARE_UPGRADE_FLAG;
-		console.log(comm + "(set upgrage flag)");
-		var result=executeShellCommand(comm); // flag
-		comm = "sudo shutdown -r now";
-		console.log(comm);
-		var result=executeShellCommand(comm); // goodbye!
-                break;
-             default:
-		console.log("ERROR: Cannot execute command: "+ command);
-           }
-         }
+	    }
 	}
      });
+   });
 }, (PINGDELAY * 1000));
 
