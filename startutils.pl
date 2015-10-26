@@ -17,14 +17,16 @@ for my $datasource (@knownDataProviders) {
   # this likely won't work with e.g. memory sticks attached to Pi
   my $resc = "dmesg | grep usb | grep attach | grep $dmesgGrep{$datasource} | tail -1";
   my $res = `$resc`; $res =~ s/\s*\n$//; $res =~s/^.*\s+//;
-  my $commname = $processes{$datasource};
-  my $grepfor = $commname; $grepfor =~ s/^.*\///;
-  my $exproc = `pgrep -f $grepfor`;
-  if ($exproc && $exproc!~/^\s*$/) {
-    print "Process to receive data from $datasource already running.\n";
-  } else {
-    my $command = "$commname -input $res";
-    print "execute $command\n";
-    system("$command > /dev/null 2>&1 &");
+  if ($res) {
+    my $commname = $processes{$datasource};
+    my $grepfor = $commname; $grepfor =~ s/^.*\///;
+    my $exproc = `pgrep -f $grepfor`;
+    if ($exproc && $exproc!~/^\s*$/) {
+      print "Process to receive data from $datasource already running.\n";
+    } else {
+      my $command = "$commname -input $res";
+      print "execute $command\n";
+      system("$command > /dev/null 2>&1 &");
+    }
   }
 }
