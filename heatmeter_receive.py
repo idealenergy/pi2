@@ -9,6 +9,8 @@ import urllib2
 import sys
 
 ENV_FILE = './env.json'
+HOME_ID_FILE = '/home/pi/home_id'
+HOME_ID=''
 
 ## Reference
 # http://www.m-bus.com/mbusdoc/md6.php - data block format
@@ -209,6 +211,17 @@ def decode(packet):
 
 	return reading
 
+def getHomeID():
+   global HOME_ID
+   global HOME_ID_FILE
+   if (os.path.isfile(HOME_ID_FILE)):
+	print "READ file "+HOME_ID_FILE
+	with open (HOME_ID_FILE, "r") as myfile:
+	   HOME_ID=myfile.read().replace('\n', '')
+   else:
+	print "File "+HOME_ID_FILE+" does not exist";
+
+
 print "Heat meter receiver"
 print
 
@@ -243,6 +256,7 @@ ser = serial.Serial(
 
 print "  Port:  /dev/" + usbtty
 
+getHomeID()
 
 while True:
 	out = ''
@@ -259,9 +273,16 @@ while True:
 		if result != False:
 #			result['home_id'] = config['home_id']
 			print result
+			global HOME_ID
+			if HOME_ID:
+				result['home_id'] = HOME_ID
+			else:
+				result['home_id'] = 'unknown'
+				getHomeID()
 			req = urllib2.Request(config['IDEALServer'] + 'heatmeterreading')
 			req.add_header('Content-Type', 'application/json')
 			try:
 				response = urllib2.urlopen(req, json.dumps(result))
 			except:
 				pass
+
