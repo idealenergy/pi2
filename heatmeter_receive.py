@@ -94,7 +94,9 @@ def decodeTimePoint(reading, vif, value):
 	day = (value >> 16) & 0x1F
 	month = (value >> 24) & 0xF
 	year = ((value >> 25) & 0x78) | ((value >> 21) & 0x7)
-	reading['timestamp'] = int((datetime(year + 2000, month, day, hour, minute) - datetime(1970, 1, 1)).total_seconds()) * 10
+	# use Pi timestamp instead of time from meter - JK.
+        reading['timestamp'] = int(calendar.timegm(time.gmtime()) * 10)
+	# reading['timestamp'] = int((datetime(year + 2000, month, day, hour, minute) - datetime(1970, 1, 1)).total_seconds()) * 10
 
 # Data block format:
 #
