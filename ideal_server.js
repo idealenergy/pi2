@@ -13,6 +13,8 @@ var config = common.config();
 
 // This is hard-wired and not configurable because it's used in the startup script
 var IDEAL_SOFTWARE_UPGRADE_FLAG="/home/pi/ideal.upgrade";
+// This one is an indicator to say we're running bigsmall mode
+var BIGSMALL_FLAG="/home/pi/bigsmall";
 
 if (process.getuid) {
   console.log('Current uid: ' + process.getuid());
@@ -228,6 +230,11 @@ serialPort.on("open", function () {
           sendJSON(JSON_data);
         //}
         break;
+      case 7: // BATTERY LIFE
+        JSON_data["battery1"] = js_data.val0;
+        JSON_data["battery2"] = js_data.val1;
+        sendJSON(JSON_data);
+        break;
     }
   });
 });
@@ -321,6 +328,11 @@ var id = setInterval(function() {
 		    var comm = "sudo shutdown -r now";
 		    console.log(comm);
 		    var result=executeShellCommand(comm); // goodbye!
+		    break;
+		  case "bigsmall":
+		    var comm = "sudo touch "+BIGSMALL_FLAG;
+		    console.log(comm + "(set bigsmall flag)");
+		    var result=executeShellCommand(comm); // flag
 		    break;
 		  case "softwareupdate":
 		    var comm = "sudo touch "+IDEAL_SOFTWARE_UPGRADE_FLAG;
