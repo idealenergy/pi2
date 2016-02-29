@@ -121,9 +121,11 @@ function sendJSON(data) {
      IDEALJSONClient.post( 'jsonreading/', data, function (err, res, body) {
 
       if(res) {
-        console.log(err);
-        console.log({"statusCode": res.statusCode});
-	console.log("body JSON: "+JSON.stringify(body));
+	if (err) {
+	  console.log(err);
+          console.log({"statusCode": res.statusCode});
+	  console.log("body JSON: "+JSON.stringify(body));
+	}
       }
   });
   }
@@ -140,6 +142,10 @@ function sendJSONbuffered(data) {
 
    if (config.compress) {
      console.log(" ...compress... ");
+
+     // this nextTick means we can postpone execution of compress. It fixes 
+     // the problem with a small memory leak on zlib.deflate
+     process.nextTick(function() {
      zlib.deflate(JSON.stringify(JSONdata), function(err, buffer) {
        if (!err) {
 	 IDEALJSONClient.post( 'jsonreadings/', buffer, function (err, res, body) {
@@ -153,6 +159,7 @@ function sendJSONbuffered(data) {
 	  console.log("Compression error: " + err);
        }
      })
+     });
    } else {
        IDEALJSONClient.post( 'jsonreadings/', JSONdata, function (err, res, body) {
          if(res) {
