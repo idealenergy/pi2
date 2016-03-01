@@ -1,0 +1,232 @@
+2016-01-13 17:33:49.921 Always, OpenZwave Version 1.3.0 Starting Up
+2016-01-13 17:33:49.934 Info, Setting Up Provided Network Key for Secure Communications
+2016-01-13 17:33:49.934 Warning, Failed - Network Key Not Set
+2016-01-13 17:33:49.936 Info, mgr,     Added driver for controller /dev/ttyACM0
+2016-01-13 17:33:49.936 Info,   Opening controller /dev/ttyACM0
+2016-01-13 17:33:49.937 Info, Trying to open serial port /dev/ttyACM0 (attempt 1)
+2016-01-13 17:33:49.939 Info, Serial port /dev/ttyACM0 opened (attempt 1)
+2016-01-13 17:33:49.941 Detail, contrlr, Queuing (Command) FUNC_ID_ZW_GET_VERSION: 0x01, 0x03, 0x00, 0x15, 0xe9
+2016-01-13 17:33:49.941 Detail, contrlr, Queuing (Command) FUNC_ID_ZW_MEMORY_GET_ID: 0x01, 0x03, 0x00, 0x20, 0xdc
+2016-01-13 17:33:49.942 Detail, contrlr, Queuing (Command) FUNC_ID_ZW_GET_CONTROLLER_CAPABILITIES: 0x01, 0x03, 0x00, 0x05, 0xf9
+2016-01-13 17:33:49.942 Detail, contrlr, Queuing (Command) FUNC_ID_SERIAL_API_GET_CAPABILITIES: 0x01, 0x03, 0x00, 0x07, 0xfb
+2016-01-13 17:33:49.943 Detail, contrlr, Queuing (Command) FUNC_ID_ZW_GET_SUC_NODE_ID: 0x01, 0x03, 0x00, 0x56, 0xaa
+2016-01-13 17:33:49.960 Detail, 
+2016-01-13 17:33:49.962 Info, contrlr, Sending (Command) message (Callback ID=0x00, Expected Reply=0x15) - FUNC_ID_ZW_GET_VERSION: 0x01, 0x03, 0x00, 0x15, 0xe9
+2016-01-13 17:33:49.970 Detail, contrlr,   Received: 0x01, 0x10, 0x01, 0x15, 0x5a, 0x2d, 0x57, 0x61, 0x76, 0x65, 0x20, 0x33, 0x2e, 0x39, 0x35, 0x00, 0x01, 0x99
+2016-01-13 17:33:49.974 Detail, 
+2016-01-13 17:33:49.974 Info, contrlr, Received reply to FUNC_ID_ZW_GET_VERSION:
+2016-01-13 17:33:49.993 Info, contrlr,     Static Controller library, version Z-Wave 3.95
+2016-01-13 17:33:49.996 Detail, Node045,   Expected reply was received
+2016-01-13 17:33:49.997 Detail, Node045,   Message transaction complete
+2016-01-13 17:33:49.997 Detail, 
+2016-01-13 17:33:49.998 Detail, contrlr, Removing current message
+2016-01-13 17:33:49.999 Detail, 
+2016-01-13 17:33:49.999 Info, contrlr, Sending (Command) message (Callback ID=0x00, Expected Reply=0x20) - FUNC_ID_ZW_MEMORY_GET_ID: 0x01, 0x03, 0x00, 0x20, 0xdc
+2016-01-13 17:33:50.004 Detail, contrlr,   Received: 0x01, 0x08, 0x01, 0x20, 0xe5, 0xe5, 0xe2, 0xa8, 0x01, 0x9d
+2016-01-13 17:33:50.005 Detail, 
+2016-01-13 17:33:50.005 Info, contrlr, Received reply to FUNC_ID_ZW_MEMORY_GET_ID. Home ID = 0xe5e5e2a8.  Our node ID = 1
+2016-01-13 17:33:50.006 Detail, Node229,   Expected reply was received
+2016-01-13 17:33:50.006 Detail, Node229,   Message transaction complete
+2016-01-13 17:33:50.006 Detail, 
+2016-01-13 17:33:50.007 Detail, contrlr, Removing current message
+2016-01-13 17:33:50.008 Detail, 
+2016-01-13 17:33:50.008 Info, contrlr, Sending (Command) message (Callback ID=0x00, Expected Reply=0x05) - FUNC_ID_ZW_GET_CONTROLLER_CAPABILITIES: 0x01, 0x03, 0x00, 0x05, 0xf9
+2016-01-13 17:33:50.034 Detail, contrlr,   Received: 0x01, 0x04, 0x01, 0x05, 0x08, 0xf7
+2016-01-13 17:33:50.035 Detail, 
+2016-01-13 17:33:50.036 Info, contrlr, Received reply to FUNC_ID_ZW_GET_CONTROLLER_CAPABILITIES:
+2016-01-13 17:33:50.037 Info, contrlr,     There is no SUC ID Server (SIS) in this network.
+2016-01-13 17:33:50.037 Info, contrlr,     The PC controller is a primary controller.
+2016-01-13 17:33:50.038 Detail, Node247,   Expected reply was received
+2016-01-13 17:33:50.038 Detail, Node247,   Message transaction complete
+2016-01-13 17:33:50.039 Detail, 
+2016-01-13 17:33:50.039 Detail, contrlr, Removing current message
+2016-01-13 17:33:50.040 Detail, 
+2016-01-13 17:33:50.040 Info, contrlr, Sending (Command) message (Callback ID=0x00, Expected Reply=0x07) - FUNC_ID_SERIAL_API_GET_CAPABILITIES: 0x01, 0x03, 0x00, 0x07, 0xfb
+2016-01-13 17:33:50.054 Detail, contrlr,   Received: 0x01, 0x2b, 0x01, 0x07, 0x01, 0x00, 0x00, 0x86, 0x00, 0x01, 0x00, 0x5a, 0xfe, 0x81, 0xff, 0x88, 0x4f, 0x1f, 0x00, 0x00, 0xfb, 0x9f, 0x7d, 0xa0, 0x67, 0x00, 0x00, 0x80, 0x00, 0x80, 0x86, 0x00, 0x00, 0x00, 0xe8, 0x73, 0x00, 0x00, 0x0e, 0x00, 0x00, 0x60, 0x00, 0x00, 0xfb
+2016-01-13 17:33:50.064 Detail, 
+2016-01-13 17:33:50.064 Info, contrlr,  Received reply to FUNC_ID_SERIAL_API_GET_CAPABILITIES
+2016-01-13 17:33:50.070 Info, contrlr,     Serial API Version:   1.0
+2016-01-13 17:33:50.071 Info, contrlr,     Manufacturer ID:      0x0086
+2016-01-13 17:33:50.071 Info, contrlr,     Product Type:         0x0001
+2016-01-13 17:33:50.072 Info, contrlr,     Product ID:           0x005a
+2016-01-13 17:33:50.072 Detail, contrlr, Queuing (Command) FUNC_ID_ZW_GET_RANDOM: 0x01, 0x04, 0x00, 0x1c, 0x20, 0xc7
+2016-01-13 17:33:50.073 Detail, contrlr, Queuing (Command) FUNC_ID_SERIAL_API_GET_INIT_DATA: 0x01, 0x03, 0x00, 0x02, 0xfe
+2016-01-13 17:33:50.083 Detail, contrlr, Queuing (Command) FUNC_ID_SERIAL_API_SET_TIMEOUTS: 0x01, 0x05, 0x00, 0x06, 0x64, 0x0f, 0x97
+2016-01-13 17:33:50.084 Detail, contrlr, Queuing (Command) FUNC_ID_SERIAL_API_APPL_NODE_INFORMATION: 0x01, 0x07, 0x00, 0x03, 0x01, 0x02, 0x01, 0x00, 0xf9
+2016-01-13 17:33:50.093 Detail,   Expected reply was received
+2016-01-13 17:33:50.094 Detail,   Message transaction complete
+2016-01-13 17:33:50.095 Detail, 
+2016-01-13 17:33:50.095 Detail, contrlr, Removing current message
+2016-01-13 17:33:50.096 Detail, 
+2016-01-13 17:33:50.096 Info, contrlr, Sending (Command) message (Callback ID=0x00, Expected Reply=0x56) - FUNC_ID_ZW_GET_SUC_NODE_ID: 0x01, 0x03, 0x00, 0x56, 0xaa
+2016-01-13 17:33:50.100 Detail, contrlr,   Received: 0x01, 0x04, 0x01, 0x56, 0x00, 0xac
+2016-01-13 17:33:50.101 Detail, 
+2016-01-13 17:33:50.102 Info, contrlr, Received reply to GET_SUC_NODE_ID.  Node ID = 0
+2016-01-13 17:33:50.103 Info, Controller Does not Support SUC - Cannot Setup Controller as SUC Node
+2016-01-13 17:33:50.107 Detail, Node172,   Expected reply was received
+2016-01-13 17:33:50.123 Detail, Node172,   Message transaction complete
+2016-01-13 17:33:50.124 Detail, 
+2016-01-13 17:33:50.124 Detail, contrlr, Removing current message
+2016-01-13 17:33:50.125 Detail, 
+2016-01-13 17:33:50.126 Info, contrlr, Sending (Command) message (Callback ID=0x00, Expected Reply=0x1c) - FUNC_ID_ZW_GET_RANDOM: 0x01, 0x04, 0x00, 0x1c, 0x20, 0xc7
+2016-01-13 17:33:50.183 Detail, contrlr,   Received: 0x01, 0x25, 0x01, 0x1c, 0x01, 0x20, 0xbc, 0x40, 0x06, 0xb1, 0x54, 0xcb, 0x55, 0x84, 0x96, 0x33, 0x8c, 0x46, 0x1f, 0xf2, 0x0f, 0x9f, 0xe0, 0x57, 0xc7, 0x07, 0x06, 0x7f, 0x88, 0x39, 0x12, 0x6b, 0x99, 0x3c, 0x0b, 0x35, 0x64, 0x14, 0xdc
+2016-01-13 17:33:50.194 Detail, 
+2016-01-13 17:33:50.204 Info, contrlr, Received reply to FUNC_ID_ZW_GET_RANDOM: true
+2016-01-13 17:33:50.204 Detail, Node032,   Expected reply was received
+2016-01-13 17:33:50.205 Detail, Node032,   Message transaction complete
+2016-01-13 17:33:50.205 Detail, 
+2016-01-13 17:33:50.206 Detail, contrlr, Removing current message
+2016-01-13 17:33:50.206 Detail, 
+2016-01-13 17:33:50.207 Info, contrlr, Sending (Command) message (Callback ID=0x00, Expected Reply=0x02) - FUNC_ID_SERIAL_API_GET_INIT_DATA: 0x01, 0x03, 0x00, 0x02, 0xfe
+2016-01-13 17:33:50.306 Detail, contrlr,   Received: 0x01, 0x25, 0x01, 0x02, 0x05, 0x00, 0x1d, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05, 0x00, 0xc1
+2016-01-13 17:33:50.314 Detail, 
+2016-01-13 17:33:50.314 Info, mgr,     Driver with Home ID of 0xe5e5e2a8 is now ready.
+2016-01-13 17:33:50.323 Info, 
+2016-01-13 17:33:50.324 Info, contrlr, Received reply to FUNC_ID_SERIAL_API_GET_INIT_DATA:
+2016-01-13 17:33:50.333 Info, contrlr,     Node 001 - New
+2016-01-13 17:33:50.336 Detail, Node001, AdvanceQueries queryPending=0 queryRetries=0 queryStage=None live=1
+2016-01-13 17:33:50.337 Detail, Node001, QueryStage_ProtocolInfo
+2016-01-13 17:33:50.337 Detail, Node001, Queuing (Query) Get Node Protocol Info (Node=1): 0x01, 0x04, 0x00, 0x41, 0x01, 0xbb
+2016-01-13 17:33:50.338 Detail, Node001, Queuing (Query) Query Stage Complete (ProtocolInfo)
+2016-01-13 17:33:50.339 Info, Node001, Initilizing Node. New Node: false (false)
+2016-01-13 17:33:50.339 Info, contrlr,     Node 003 - New
+2016-01-13 17:33:50.340 Detail, Node003, AdvanceQueries queryPending=0 queryRetries=0 queryStage=None live=1
+2016-01-13 17:33:50.340 Detail, Node003, QueryStage_ProtocolInfo
+2016-01-13 17:33:50.341 Detail, Node003, Queuing (Query) Get Node Protocol Info (Node=3): 0x01, 0x04, 0x00, 0x41, 0x03, 0xb9
+2016-01-13 17:33:50.342 Detail, Node003, Queuing (Query) Query Stage Complete (ProtocolInfo)
+2016-01-13 17:33:50.342 Info, Node003, Initilizing Node. New Node: false (false)
+2016-01-13 17:33:50.353 Detail,   Expected reply was received
+2016-01-13 17:33:50.354 Detail,   Message transaction complete
+2016-01-13 17:33:50.363 Detail, 
+2016-01-13 17:33:50.364 Detail, contrlr, Removing current message
+2016-01-13 17:33:50.365 Detail, Node001, Notification: DriverReady
+2016-01-13 17:33:50.365 Detail, Node001, Notification: NodeNew
+2016-01-13 17:33:50.366 Detail, Node001, Notification: NodeAdded
+2016-01-13 17:33:50.366 Detail, Node003, Notification: NodeNew
+2016-01-13 17:33:50.367 Detail, Node003, Notification: NodeAdded
+2016-01-13 17:33:50.368 Detail, 
+2016-01-13 17:33:50.368 Info, contrlr, Sending (Command) message (Callback ID=0x00, Expected Reply=0x06) - FUNC_ID_SERIAL_API_SET_TIMEOUTS: 0x01, 0x05, 0x00, 0x06, 0x64, 0x0f, 0x97
+2016-01-13 17:33:50.375 Detail, contrlr,   Received: 0x01, 0x05, 0x01, 0x06, 0x64, 0x0f, 0x96
+2016-01-13 17:33:50.376 Detail, 
+2016-01-13 17:33:50.384 Info, contrlr, Received reply to FUNC_ID_SERIAL_API_SET_TIMEOUTS
+2016-01-13 17:33:50.384 Detail, Node015,   Expected reply was received
+2016-01-13 17:33:50.385 Detail, Node015,   Message transaction complete
+2016-01-13 17:33:50.385 Detail, 
+2016-01-13 17:33:50.386 Detail, contrlr, Removing current message
+2016-01-13 17:33:50.386 Detail, 
+2016-01-13 17:33:50.387 Info, contrlr, Sending (Command) message (Callback ID=0x00, Expected Reply=0x00) - FUNC_ID_SERIAL_API_APPL_NODE_INFORMATION: 0x01, 0x07, 0x00, 0x03, 0x01, 0x02, 0x01, 0x00, 0xf9
+2016-01-13 17:33:50.390 Detail, contrlr, Removing current message
+2016-01-13 17:33:50.391 Detail, 
+2016-01-13 17:33:50.392 Info, Node001, Sending (Query) message (Callback ID=0x00, Expected Reply=0x41) - Get Node Protocol Info (Node=1): 0x01, 0x04, 0x00, 0x41, 0x01, 0xbb
+2016-01-13 17:33:50.396 Detail, Node001,   Received: 0x01, 0x09, 0x01, 0x41, 0x93, 0x16, 0x01, 0x02, 0x02, 0x01, 0x33
+2016-01-13 17:33:50.404 Detail, 
+2016-01-13 17:33:50.404 Info, Node001, Received reply to FUNC_ID_ZW_GET_NODE_PROTOCOL_INFO
+2016-01-13 17:33:50.405 Info, Node001,   Protocol Info for Node 1:
+2016-01-13 17:33:50.405 Info, Node001,     Listening     = true
+2016-01-13 17:33:50.406 Info, Node001,     Beaming       = true
+2016-01-13 17:33:50.406 Info, Node001,     Routing       = false
+2016-01-13 17:33:50.407 Info, Node001,     Max Baud Rate = 40000
+2016-01-13 17:33:50.408 Info, Node001,     Version       = 4
+2016-01-13 17:33:50.408 Info, Node001,     Security      = false
+2016-01-13 17:33:50.489 Info, Node001,   Basic device class    (0x02) - Static Controller
+2016-01-13 17:33:50.490 Info, Node001,   Generic device Class  (0x02) - Static Controller
+2016-01-13 17:33:50.491 Info, Node001,   Specific device class (0x01) - Static PC Controller
+2016-01-13 17:33:50.491 Info, Node001,     COMMAND_CLASS_BASIC is not mapped
+2016-01-13 17:33:50.492 Info, Node001,   Mandatory Command Classes for Node 1:
+2016-01-13 17:33:50.493 Info, Node001,     None
+2016-01-13 17:33:50.493 Info, Node001,   Mandatory Command Classes controlled by Node 1:
+2016-01-13 17:33:50.494 Info, Node001,     COMMAND_CLASS_BASIC
+2016-01-13 17:33:50.495 Detail, Node022,   Expected reply was received
+2016-01-13 17:33:50.495 Detail, Node022,   Message transaction complete
+2016-01-13 17:33:50.496 Detail, 
+2016-01-13 17:33:50.503 Detail, Node001, Removing current message
+2016-01-13 17:33:50.504 Detail, Node001, Notification: NodeProtocolInfo
+2016-01-13 17:33:50.505 Detail, Node001, Notification: ValueAdded
+2016-01-13 17:33:50.506 Detail, Node001, Query Stage Complete (ProtocolInfo)
+2016-01-13 17:33:50.506 Detail, Node001, AdvanceQueries queryPending=0 queryRetries=0 queryStage=Probe live=1
+2016-01-13 17:33:50.507 Detail, Node001, QueryStage_Probe
+2016-01-13 17:33:50.507 Detail, Node001, QueryStage_WakeUp
+2016-01-13 17:33:50.508 Detail, Node001, QueryStage_ManufacturerSpecific1
+2016-01-13 17:33:50.508 Detail, Node001, Load Controller Manufacturer Specific Config
+2016-01-13 17:33:50.753 Info, Node001,   Opening config param file config/aeotec/zstickgen5.xml
+2016-01-13 17:33:50.761 Detail, Node001, QueryStage_NodePlusInfo
+2016-01-13 17:33:50.773 Detail, Node001, QueryStage_SecurityReport
+2016-01-13 17:33:50.774 Detail, Node001, QueryStage_ManufacturerSpecific2
+2016-01-13 17:33:50.774 Detail, Node001, QueryStage_Versions
+2016-01-13 17:33:50.775 Detail, Node001, QueryStage_Instances
+2016-01-13 17:33:50.775 Info, Node001, Essential node queries are complete
+2016-01-13 17:33:50.776 Detail, Node001, QueryStage_Static
+2016-01-13 17:33:50.777 Detail, Node001, QueryStage_Associations
+2016-01-13 17:33:50.777 Detail, Node001, QueryStage_Neighbors
+2016-01-13 17:33:50.778 Detail, Requesting routing info (neighbor list) for Node 1
+2016-01-13 17:33:50.786 Detail, Node001, Queuing (Command) Get Routing Info (Node=1): 0x01, 0x07, 0x00, 0x80, 0x01, 0x00, 0x00, 0x03, 0x7a
+2016-01-13 17:33:50.786 Detail, Node001, Queuing (Query) Query Stage Complete (Neighbors)
+2016-01-13 17:33:50.787 Detail, Node001, Notification: EssentialNodeQueriesComplete
+2016-01-13 17:33:50.788 Detail, 
+2016-01-13 17:33:50.789 Info, Node001, Sending (Command) message (Callback ID=0x00, Expected Reply=0x80) - Get Routing Info (Node=1): 0x01, 0x07, 0x00, 0x80, 0x01, 0x00, 0x00, 0x03, 0x7a
+2016-01-13 17:33:50.795 Detail, Node001,   Received: 0x01, 0x20, 0x01, 0x80, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5a
+2016-01-13 17:33:50.804 Detail, 
+2016-01-13 17:33:50.804 Info, Node001, Received reply to FUNC_ID_ZW_GET_ROUTING_INFO
+2016-01-13 17:33:50.805 Info, Node001,     Neighbors of this node are:
+2016-01-13 17:33:50.805 Info, Node001,     Node 3
+2016-01-13 17:33:50.806 Detail,   Expected reply was received
+2016-01-13 17:33:50.806 Detail,   Message transaction complete
+2016-01-13 17:33:50.807 Detail, 
+2016-01-13 17:33:50.807 Detail, Node001, Removing current message
+2016-01-13 17:33:50.808 Detail, 
+2016-01-13 17:33:50.809 Info, Node003, Sending (Query) message (Callback ID=0x00, Expected Reply=0x41) - Get Node Protocol Info (Node=3): 0x01, 0x04, 0x00, 0x41, 0x03, 0xb9
+2016-01-13 17:33:50.813 Detail, Node003,   Received: 0x01, 0x09, 0x01, 0x41, 0x52, 0x9c, 0x00, 0x04, 0x20, 0x01, 0x5d
+2016-01-13 17:33:50.826 Detail, 
+2016-01-13 17:33:50.833 Info, Node003, Received reply to FUNC_ID_ZW_GET_NODE_PROTOCOL_INFO
+2016-01-13 17:33:50.834 Info, Node003,   Protocol Info for Node 3:
+2016-01-13 17:33:50.835 Info, Node003,     Listening     = false
+2016-01-13 17:33:50.835 Info, Node003,     Frequent      = false
+2016-01-13 17:33:50.836 Info, Node003,     Beaming       = true
+2016-01-13 17:33:50.836 Info, Node003,     Routing       = true
+2016-01-13 17:33:50.837 Info, Node003,     Max Baud Rate = 40000
+2016-01-13 17:33:50.837 Info, Node003,     Version       = 3
+2016-01-13 17:33:50.837 Info, Node003,     Security      = false
+2016-01-13 17:33:50.843 Info, Node003,   Basic device class    (0x04) - Routing Slave
+2016-01-13 17:33:50.844 Info, Node003,   Generic device Class  (0x20) - Binary Sensor
+2016-01-13 17:33:50.845 Info, Node003,   Specific device class (0x01) - Routing Binary Sensor
+2016-01-13 17:33:50.845 Info, Node003,     COMMAND_CLASS_BASIC will be mapped to COMMAND_CLASS_SENSOR_BINARY
+2016-01-13 17:33:50.853 Info, Node003,   Mandatory Command Classes for Node 3:
+2016-01-13 17:33:50.854 Info, Node003,     COMMAND_CLASS_SENSOR_BINARY
+2016-01-13 17:33:50.854 Info, Node003,     COMMAND_CLASS_WAKE_UP
+2016-01-13 17:33:50.855 Info, Node003,   Mandatory Command Classes controlled by Node 3:
+2016-01-13 17:33:50.855 Info, Node003,     COMMAND_CLASS_BASIC
+2016-01-13 17:33:50.856 Detail, Node156,   Expected reply was received
+2016-01-13 17:33:50.861 Detail, Node156,   Message transaction complete
+2016-01-13 17:33:50.862 Detail, 
+2016-01-13 17:33:50.862 Detail, Node003, Removing current message
+2016-01-13 17:33:50.863 Detail, Node003, Notification: NodeProtocolInfo
+2016-01-13 17:33:50.864 Detail, Node003, Notification: ValueAdded
+2016-01-13 17:33:50.873 Detail, Node003, Notification: ValueAdded
+2016-01-13 17:33:50.874 Detail, Node003, Query Stage Complete (ProtocolInfo)
+2016-01-13 17:33:50.883 Detail, Node003, AdvanceQueries queryPending=0 queryRetries=0 queryStage=Probe live=1
+2016-01-13 17:33:50.884 Detail, Node003, QueryStage_Probe
+2016-01-13 17:33:50.884 Info, Node003, NoOperation::Set - Routing=true
+2016-01-13 17:33:50.885 Detail, Node003, Queuing (NoOp) NoOperation_Set (Node=3): 0x01, 0x09, 0x00, 0x13, 0x03, 0x02, 0x00, 0x00, 0x25, 0x0a, 0xcb
+2016-01-13 17:33:50.886 Detail, Node003, Queuing (Query) Query Stage Complete (Probe)
+2016-01-13 17:33:50.886 Detail, 
+2016-01-13 17:33:50.887 Info, Node003, Sending (NoOp) message (Callback ID=0x0a, Expected Reply=0x13) - NoOperation_Set (Node=3): 0x01, 0x09, 0x00, 0x13, 0x03, 0x02, 0x00, 0x00, 0x25, 0x0a, 0xcb
+2016-01-13 17:33:50.900 Detail, Node003,   Received: 0x01, 0x04, 0x01, 0x13, 0x01, 0xe8
+2016-01-13 17:33:50.902 Detail, Node003,   ZW_SEND_DATA delivered to Z-Wave stack
+2016-01-13 17:33:51.018 Detail, Node003,   Received: 0x01, 0x07, 0x00, 0x13, 0x0a, 0x01, 0x00, 0x0d, 0xed
+2016-01-13 17:33:51.019 Detail, Node003,   ZW_SEND_DATA Request with callback ID 0x0a received (expected 0x0a)
+2016-01-13 17:33:51.023 Info, Node003, WARNING: ZW_SEND_DATA failed. No ACK received - device may be asleep.
+2016-01-13 17:33:51.024 Info, Node003,   Node 3 has been marked as asleep
+2016-01-13 17:33:51.024 Info, Node003, Node not responding - moving QueryStageComplete command to Wake-Up queue
+2016-01-13 17:33:51.034 Detail, Node003, Notification: Notification - NoOperation
+2016-01-13 17:33:51.034 Detail, Node003, Notification: Notification - Node Asleep
+2016-01-13 17:33:51.035 Detail, Node001, Query Stage Complete (Neighbors)
+2016-01-13 17:33:51.043 Detail, Node001, AdvanceQueries queryPending=0 queryRetries=0 queryStage=Session live=1
+2016-01-13 17:33:51.044 Detail, Node001, QueryStage_Session
+2016-01-13 17:33:51.044 Detail, Node001, QueryStage_Dynamic
+2016-01-13 17:33:51.045 Detail, Node001, QueryStage_Configuration
+2016-01-13 17:33:51.045 Detail, Node001, QueryStage_Complete
+2016-01-13 17:33:51.046 Warning, CheckCompletedNodeQueries m_allNodesQueried=0 m_awakeNodesQueried=0
+2016-01-13 17:33:51.049 Warning, CheckCompletedNodeQueries all=0, deadFound=0 sleepingOnly=1
+2016-01-13 17:33:51.049 Info,          Node query processing complete except for sleeping nodes.
+2016-01-13 17:33:51.050 Detail, Node001, Notification: NodeQueriesComplete
+2016-01-13 17:33:51.050 Detail, contrlr, Notification: AwakeNodesQueried
