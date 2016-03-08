@@ -7,10 +7,12 @@
 # Z-Wave, Open Energy Monitor
 my $bigsmallfile = "/home/pi/bigsmall";
 my $homefile = "/home/pi/home_id";
-my @knownDataProviders = ("zwave");
-my %processes = ("zwave" => "./zwave/IDEALzwave/idealoz", "HeatMeter" => "./heatmeter_receive.py");
+my @knownDataProviders = ("zwave","oem");
+my %processes = ("zwave" => "./zwave/IDEALzwave/idealoz", "oem" => "./oem_receive.pl");
 my $home = `cat ~/home_id`;
-my %args = ("zwave" => "-u /dev/ttyACM0 -c /home/pi/pi/env.json -h $home");
+my $oem_ip = `cat ~/oem_ip`;
+my %args = ("zwave" => "-u /dev/ttyACM0 -c /home/pi/pi/env.json -h $home", 
+	"oem" => "-i $oem_ip");
 
 if (-f "$bigsmallfile" && -f "$homefile") {
   for my $datasource (@knownDataProviders) {
