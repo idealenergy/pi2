@@ -9,6 +9,7 @@ use JSON qw( );
 
 my $ip = "";
 my $apikey = "";
+my $DEFAULT_API_KEY = "4e7e7b31eb6b3e911e65e7d81ee417d5";
 my $JSON = "/home/pi/pi/env.json";
 my $select = $ENV{$ENVVAR} || "development";
 my $HOMEFILE = "/home/pi/home_id";
@@ -21,7 +22,7 @@ sub usage {
     exit 1;
 }
 
-if (scalar @ARGV != 4) {
+if (scalar @ARGV>4 || scalar @ARGV<2) {
     print "Incorrect number of arguments: ".scalar @ARGV."\n";
     &usage;
 }
@@ -39,7 +40,11 @@ while (@ARGV) {
     }
 }
 
-if (!$ip || !$apikey) {
+if (!$apikey) {
+  $apikey=$DEFAULT_API_KEY;
+}
+
+if (!$ip) {
     &usage;
 }
 
