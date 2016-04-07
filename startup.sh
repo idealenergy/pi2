@@ -25,4 +25,5 @@ if [ -f $upgradeflag ]; then
     sleep 5
     sudo rm $upgradeflag
 fi
+. $HOME/.profile
 node server.js
