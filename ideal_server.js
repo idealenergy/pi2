@@ -15,6 +15,7 @@ var config = common.config();
 var IDEAL_SOFTWARE_UPGRADE_FLAG="/home/pi/ideal.upgrade";
 // This one is an indicator to say we're running bigsmall mode
 var BIGSMALL_FLAG="/home/pi/bigsmall";
+var OEM_IP="/home/pi/oem_ip";
 
 if (process.getuid) {
   console.log('Current uid: ' + process.getuid());
@@ -340,6 +341,14 @@ var id = setInterval(function() {
 		    var comm = "sudo touch "+BIGSMALL_FLAG;
 		    console.log(comm + "(set bigsmall flag)");
 		    var result=executeShellCommand(comm); // flag
+		    break;
+		  case "oemip":
+		    var val = res.body.value;
+		    if (val!=null) { 
+		      var comm = "sudo echo \""+val+"\" > "+OEM_IP;
+		      console.log(comm + "(set oem ip to "+val+")");
+		      var result=executeShellCommand(comm); // flag
+                    }
 		    break;
 		  case "softwareupdate":
 		    var comm = "sudo touch "+IDEAL_SOFTWARE_UPGRADE_FLAG;
