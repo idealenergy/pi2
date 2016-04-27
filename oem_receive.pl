@@ -11,11 +11,13 @@ my $ip = "";
 my $apikey = "";
 my $DEFAULT_API_KEY = "4e7e7b31eb6b3e911e65e7d81ee417d5";
 my $JSON = "/home/pi/pi/env.json";
+my $ENVVAR = "NODE_ENV";
 my $select = $ENV{$ENVVAR} || "development";
 my $HOMEFILE = "/home/pi/home_id";
 my $HOME = `cat $HOMEFILE`;
-my $ENVVAR = "NODE_ENV";
 $HOME=~s/[\s\n]//g;
+
+print STDERR "\n\nNODE_ENV is $select\n\n";
 
 sub usage {
     print STDERR "Usage: oem_recieve.pl -a apikey -i IP_address in_dir\n";
