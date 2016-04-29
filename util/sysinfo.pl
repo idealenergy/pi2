@@ -14,8 +14,9 @@ my $ev=`printenv $ENVVAR`; $ev=~s/\n//;
 $allvals{$ENVVAR} = $ev;
 my $piv=`grep Revision /proc/cpuinfo`;
 $piv=~s/^.*:\s*//; $piv=~s/\n//;
-# we know about 2 versions - otherwise just report the revision
+# we know about 3 versions - otherwise just report the revision
 if ($piv=~/a\d1041/) { $piv="2 Model B"; }
+elsif ($piv=~/a02082/) { $piv="3 Model B"; }
 elsif ($piv=~/0010$/) { $piv="B+"; }
 $allvals{"PI_VERSION"} = $piv;
 my $osv=`grep PRETTY_NAME /etc/os-release`;
