@@ -510,19 +510,23 @@ void OnNotification (Notification const* _notification, void* _context)
 			pthread_mutex_unlock(&nlock);
 			break;
 		case Notification::Type_ValueChanged:
-			Log::Write(LogLevel_Info, "Notification: Value Changed Home 0x%08x Node %d Genre %s Class %s Instance %d Index %d Type %s",
+			Manager::Get()->GetValueAsString(id,&valueStr);
+                        {
+                          string units = Manager::Get()->GetValueUnits(id);
+			  Log::Write(LogLevel_Info, "Notification: Value Changed Home 0x%08x Node %d Genre %s Class %s Instance %d Index %d Type %s Value %s Units %s",
 					_notification->GetHomeId(), _notification->GetNodeId(),
 					valueGenreStr(id.GetGenre()), cclassStr(id.GetCommandClassId()), id.GetInstance(),
-					id.GetIndex(), valueTypeStr(id.GetType()));
-			Manager::Get()->GetValueAsString(id,&valueStr);
-			urlstr << transport << "://" << server << ":" << port << "/zwavereading";
-			url = urlstr.str();
-			commandstr << "curl -i -X POST -H 'Content-Type: application/json' -d '{\"home_id\":\"" << homeid << "\",\"sensorbox_address\":\"" << std::to_string(_notification->GetNodeId()) << "\",\"genre\":\"" << valueGenreStr(id.GetGenre()) << "\",\"class\":\"" << cclassStr(id.GetCommandClassId()) << "\",\"valuetype\":\"" << valueTypeStr(id.GetType()) << "\",\"timestamp\":" << std::time(nullptr) <<",\"value\":\"" << valueStr.c_str() << "\"}' " << url;
-			command = commandstr.str();
-			std::cout << "\nCommand: " << command.c_str() << ".\n";
-			// fprintf(stdout, "\nCommand: '%s'\n", command.c_str());
+					id.GetIndex(), valueTypeStr(id.GetType()), 
+					valueStr.c_str(), units.c_str());
+			  urlstr << transport << "://" << server << ":" << port << "/zwavereading";
+			  url = urlstr.str();
+			  commandstr << "curl -i -X POST -H 'Content-Type: application/json' -d '{\"home_id\":\"" << homeid << "\",\"sensorbox_address\":\"" << std::to_string(_notification->GetNodeId()) << "\",\"genre\":\"" << valueGenreStr(id.GetGenre()) << "\",\"class\":\"" << cclassStr(id.GetCommandClassId()) << "\",\"valuetype\":\"" << valueTypeStr(id.GetType()) << "\",\"timestamp\":" << std::time(nullptr) <<",\"value\":\"" << valueStr.c_str() <<",\"unit\":\"" << units.c_str() << "\"}' " << url;
+			  command = commandstr.str();
+			  std::cout << "\nCommand: " << command.c_str() << ".\n";
+			  // fprintf(stdout, "\nCommand: '%s'\n", command.c_str());
 
-			system(command.c_str());
+			  system(command.c_str());
+			}
 			pthread_mutex_lock(&nlock);
 			nodes[_notification->GetNodeId()]->saveValue(id);
 			pthread_mutex_unlock(&nlock);
