@@ -300,7 +300,7 @@ var id = setInterval(function() {
      console.log("Hello from "+homeID);
      var JSONdata=[];
      fs.readFile("/home/pi/sysinfo", function(err,data) {
-	if (err) {
+	if (err || data=="") {
 	   JSONdata={ "home_id": homeID };
         } else {
 	   JSONdata = JSON.parse(data);
