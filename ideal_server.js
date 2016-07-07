@@ -344,7 +344,7 @@ var id = setInterval(function() {
 		    break;
 		  case "setpitype":
 		    var typeval = res.body.value;
-		    var comm = "sed -i 's/NODE_ENV=.*$/NODE_ENV=\"development\"/'  ~/.profile"
+		    var comm = "sed -i 's/NODE_ENV=.*$/NODE_ENV=\""+typeval+"\"/'  ~/.profile"
 		    console.log(comm + "(set Home type - production or development)");
 		    var result=executeShellCommand(comm); // flag
 		    break;
