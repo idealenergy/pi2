@@ -342,6 +342,12 @@ var id = setInterval(function() {
 		    console.log(comm + "(set bigsmall flag)");
 		    var result=executeShellCommand(comm); // flag
 		    break;
+		  case "setpitype":
+		    var typeval = res.body.value;
+		    var comm = "sed -i 's/NODE_ENV=.*$/NODE_ENV=\"development\"/'  ~/.profile"
+		    console.log(comm + "(set Home type - production or development)");
+		    var result=executeShellCommand(comm); // flag
+		    break;
 		  case "oemip":
 		    var val = res.body.value;
 		    if (val!=null) { 
