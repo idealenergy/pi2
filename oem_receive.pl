@@ -9,7 +9,7 @@ use JSON qw( );
 
 my $ip = "";
 my $apikey = "";
-my $DEFAULT_API_KEY = "4e7e7b31eb6b3e911e65e7d81ee417d5";
+my $DEFAULT_API_KEY = "ec81b582b92412d0938005fe14c263a6";
 my $JSON = "/home/pi/pi/env.json";
 my $ENVVAR = "NODE_ENV";
 my $select = $ENV{$ENVVAR} || "development";
@@ -20,7 +20,7 @@ $HOME=~s/[\s\n]//g;
 print STDERR "\n\nNODE_ENV is $select\n\n";
 
 sub usage {
-    print STDERR "Usage: oem_recieve.pl -a apikey -i IP_address in_dir\n";
+    print STDERR "Usage: oem_recieve.pl -a apikey -i IP_address\n";
     exit 1;
 }
 
@@ -62,11 +62,17 @@ my $data = $json->decode($json_text);
 
 sub retrieveval() {
     my ($index) = @_;
-    my $command = "curl http://$ip/emoncms/nodes/8/rx/$index?apikey=$apikey 2> /dev/null";
+    #my $command = "curl http://$ip/emoncms/nodes/8/rx/$index?apikey=$apikey 2> /dev/null";
+    my $command = "curl 'http://$ip/emoncms/feed/value.json\?id=$index\&apikey=$apikey' 2> /dev/null";
+    print " HELLO: $command\n";
     my $res = `$command`;
-    if ($res=~/\"value\":([^,]*)/) { 
-	return $1;
+    print "  THERE: $res\n";
+    if ($res=~/^\"([\d.]*)\"/) {
+	return $res;
     }
+#    if ($res=~/\"value\":([^,]*)/) { 
+#	return $1;
+#    }
     return 0;
 }
 
@@ -88,10 +94,10 @@ sub sendval() {
 
 while (true) {
     my @vals=();
-    for (my $i=0; $i<4; $i++) {
-	$vals[$i]=&retrieveval($i+1);
+    for (my $i=0; $i<5; $i++) {
+	$vals[$i]=&retrieveval($i+2);
     }
     &sendval(@vals);
-    sleep 2;
+    sleep 5;
 }
 

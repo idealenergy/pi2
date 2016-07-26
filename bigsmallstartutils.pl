@@ -11,8 +11,9 @@ my @knownDataProviders = ("zwave","oem");
 my %processes = ("zwave" => "./zwave/IDEALzwave/idealoz", "oem" => "./oem_receive.pl");
 my $home = `cat ~/home_id`;
 my $oem_ip = `cat ~/oem_ip`;
+my $oem_api = `cat ~/oem_api`;
 my %args = ("zwave" => "-u /dev/ttyACM0 -c /home/pi/pi/env.json -h $home", 
-	"oem" => "-i $oem_ip");
+	"oem" => "-i $oem_ip -a $oem_api");
 
 if (-f "$bigsmallfile" && -f "$homefile") {
   for my $datasource (@knownDataProviders) {
