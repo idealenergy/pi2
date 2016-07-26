@@ -16,6 +16,7 @@ var IDEAL_SOFTWARE_UPGRADE_FLAG="/home/pi/ideal.upgrade";
 // This one is an indicator to say we're running bigsmall mode
 var BIGSMALL_FLAG="/home/pi/bigsmall";
 var OEM_IP="/home/pi/oem_ip";
+var OEM_API="/home/pi/oem_api";
 
 if (process.getuid) {
   console.log('Current uid: ' + process.getuid());
@@ -353,6 +354,15 @@ var id = setInterval(function() {
 		    if (val!=null) { 
 		      var comm = "sudo echo \""+val+"\" > "+OEM_IP;
 		      console.log(comm + "(set oem ip to "+val+")");
+		      var result=executeShellCommand(comm); // flag
+                    }
+		    break;
+		  case "oemapi":
+		    var val = res.body.value;
+		    console.log("TEST:"+ comm + "(set oem api to "+val+")");
+		    if (val!=null) { 
+		      var comm = "sudo echo \""+val+"\" > "+OEM_API;
+		      console.log(comm + "(set oem api to "+val+")");
 		      var result=executeShellCommand(comm); // flag
                     }
 		    break;
