@@ -76,15 +76,26 @@ sub retrieveval() {
     return 0;
 }
 
+sub retrievevals() {
+    my ($fetches) = @_;
+    #my $command = "curl http://$ip/emoncms/nodes/8/rx/$index?apikey=$apikey 2> /dev/null";
+    my $command = "curl 'http://$ip/emoncms/feed/fetch.json\?ids=$fetches\&apikey=$apikey' 2> /dev/null";
+    print " HELLO: $command\n";
+    my $res = `$command`;
+    print "  THERE: $res\n";
+    return $res;
+}
+
 sub sendval() {
-    my (@vals) = @_;
+    my ($vals) = @_;
     my $selected = $data->{$select};
     my $time = time;
+    my $valres = $json->decode($vals);
     my $jsonstring="\"home_id\":$HOME,\"timestamp\":$time";
     if ($selected) {
 	for (my $i=0; $i<4; $i++) {
 	    my $j=$i+1;
-	    $jsonstring.=",\"power$j\":$vals[$i]";
+	    $jsonstring.=",\"power$j\":$valres->[$i]";
 	}
         my $command = "curl -i -X POST -H 'Content-Type: application/json' -d '{$jsonstring}' $selected->{IDEALServer}oemreading";
 	print "$command\n";
@@ -92,12 +103,41 @@ sub sendval() {
     }
 }
 
+# First grab all feeds that we can see and use the feed names to decide which ones to fetch
+my $command = "curl 'http://$ip/emoncms/feed/list.json\?apikey=$apikey' 2> /dev/null";
+print " H1: $command\n";
+my $res = $json->decode(`$command`);
+my $fetchstring="";
+my $size=scalar(@{$res});
+my %emon=();
+for (my $f=0; $f<$size; $f++) {
+   my $id = $res->[$f]{"id"};
+   my $name = $res->[$f]{"name"};
+   # We're interested in anything of the form node:emontx3:powern
+   if ($name=~/node:emontx3:power(\d)/) {
+     my $emonindex = $1;
+     $emon{$emonindex}=$id;
+   }	
+}
+foreach $e (sort keys %emon) {
+  if ($emon{$e}) {
+    if ($fetchstring) { $fetchstring.=","; }
+    $fetchstring.= $emon{$e};
+  } 
+}
+
+print "Fetch these: " . $fetchstring . ".\n";
+if (!$fetchstring) {
+   print "ERROR: No feeds defined or API key incorrect!! Cannot retrieve any values: quitting\n";
+   exit 1;
+}
+
 while (true) {
-    my @vals=();
-    for (my $i=0; $i<5; $i++) {
-	$vals[$i]=&retrieveval($i+2);
-    }
-    &sendval(@vals);
+    my $vals=&retrievevals($fetchstring);
+#    for (my $i=0; $i<5; $i++) {
+#	$vals[$i]=&retrieveval($i+2);
+#    }
+    &sendval($vals);
     sleep 5;
 }
 
