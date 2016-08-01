@@ -23,5 +23,5 @@ fi
 
 # This will get set before all IDEAL-aware processes run and controls 
 # the settings for communication etc. valid values: production, development
-NODE_ENV="development"
+NODE_ENV="production"
 export NODE_ENV
