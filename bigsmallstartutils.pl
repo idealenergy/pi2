@@ -12,6 +12,9 @@ my %processes = ("zwave" => "./zwave/IDEALzwave/idealoz", "oem" => "./oem_receiv
 my $home = `cat ~/home_id`;
 my $oem_ip = `cat ~/oem_ip`;
 my $oem_api = `cat ~/oem_api`;
+$oem_ip=~s/\n//g;
+$oem_api=~s/\n//g;
+$home=~s/\n//g;
 my %args = ("zwave" => "-u /dev/ttyACM0 -c /home/pi/pi/env.json -h $home", 
 	"oem" => "-i $oem_ip -a $oem_api");
 
