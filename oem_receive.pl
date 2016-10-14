@@ -95,7 +95,7 @@ sub sendval() {
     if ($selected) {
 	for (my $i=0; $i<4; $i++) {
 	    my $j=$i+1;
-	    $jsonstring.=",\"power$j\":$valres->[$i]";
+	    $jsonstring.=",\"power$j\":\"$valres->[$i]\"";
 	}
         my $command = "curl -i -X POST -H 'Content-Type: application/json' -d '{$jsonstring}' $selected->{IDEALServer}oemreading";
 	print "$command\n";
