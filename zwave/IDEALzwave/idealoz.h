@@ -86,6 +86,7 @@ public:
   static int32 getNodeCount() { return nodecount; };
   void sortValues();
   void addValue(ValueID id);
+  void requestValue(ValueID id);
   void removeValue(ValueID id);
   void saveValue(ValueID id);
   int32 getValueCount();

@@ -29,6 +29,8 @@
 
 #include "Options.h"
 #include "Manager.h"
+#include "command_classes/MeterPulse.h"
+#include "command_classes/Meter.h"
 #include "Node.h"
 #include "Group.h"
 #include "Notification.h"
@@ -125,6 +127,68 @@ void MyNode::sortValues ()
 	sort(values.begin(), values.end(), compareValue);
 	setChanged(true);
 }
+
+/*
+ * MyNode::requestValue
+ *  Added by JK. This took a lot of trial and error and still does not work as it should
+ * We simply don't get notifications of wake up from the meter. If the log is on, we can see it has
+ * woken up but less than 1/10th second later we get a sleep message. We only get notified of the sleep,
+ * so this appears to be all we can do - queue a request when the sleep message happens.
+ *
+ * Clearly this is WRONG and the result is we only get values on every second wakeup.
+ * Interestingly those wakeups are notas requested. On an alleged 90s wakeup interval we get values
+ * after 105 seconds, then 133 then 105 then 133. We're getting double than number of wakeups however.
+ * This all seems very flakey - and also makes testing difficult - need to set the wakeup interval low
+ * do some testing and then reset it to maybe 600s to get approx 900s updates!
+ * Lots of commented out code describes what I tried...
+ */
+void MyNode::requestValue (ValueID id)
+{
+	bool reqstatus = Manager::Get()->RequestNodeDynamic(id.GetHomeId(),id.GetNodeId());
+	printf("Requested dynamic data : (%d)\n", reqstatus);
+
+        //printf( "Command class is int(%d)\n", id.GetCommandClassId() );
+	//std::cout << "\nCommand class is " << id.GetCommandClassId() << "\n";
+	//uint64 cid = 0x35; // MeterPulse
+	//uint64 cid = 0x32; // Meter
+	//CommandClass *cc = MeterPulse::Create(id.GetHomeId(),id.GetNodeId());
+	//CommandClass *cc = Meter::Create(id.GetHomeId(),id.GetNodeId());
+	// parameters seem to be poorly explained but it would seem wrong to use the index and
+	// instance of the incoming message (which is a wake_up message). However, it's hard to
+	// know what they should be.. somehow indicating what meter value we want?? Creating our
+	// own ValueID doesn't make any odds
+	//ValueID* vid = new ValueID(id.GetHomeId(), cid);
+	//Value* val = cc->GetValue(vid->GetInstance(), vid->GetIndex());
+	//printf("Attempted to get value : (%s)", val->GetAsString().c_str());
+	//printf("Attempted to get value (%s)",val);
+	//Manager::Get()->SetNodeOn(id.GetHomeId(),id.GetNodeId());
+	//printf("Set node %d on\n", id.GetNodeId());
+	// I believe this works in the same way as RequestNodeDynamic..
+	//bool reqstate = Manager::Get()->RequestNodeState(id.GetHomeId(),id.GetNodeId());
+	//printf("Requested state data : (%d)\n", reqstate);
+
+	// This RequestValue doesn't work on its own (tested for 6 wakeups), or in combination with SetNodeOn (6)
+	//cc->RequestValue(0,id.GetIndex(),id.GetInstance(),Driver::MsgQueue_Send);
+	//printf("Requested value\n");
+	//Manager::Get()->SetNodeOff(id.GetHomeId(),id.GetNodeId());
+	//printf("Set node off\n");
+	//string s = Manager::Get()->GetValueLabel(*vid);
+	//printf("Aye right : (%s)", s.c_str());
+	//Manager::Get()->RequestValue(id,"METER_GET");
+
+
+	// This uses private methods - cannot do it. It is basically code from the open zwave codebase (Meter.cpp)
+	//Node* node=NULL;
+	//if (Driver* driver=Manager::Get()->GetDriver(id.GetHomeId())) {
+	//    node = driver->GetNodeUnsafe(id.GetNodeId());
+	//    if (node!=NULL) {
+	//	if (CommandClass* cc = node->GetCommandClass(id.GetCommandClassId())) {
+	//	    cc->RequestValue(0,id.GetIndex(),id.GetInstance(),Driver::MsgQueue_Send);
+	//	}
+	//    }
+	//}
+}
+
 /*
  * MyNode::addValue
  * Per notifications, add a value to a node.
@@ -450,6 +514,52 @@ void removeChar(char cstr[], char let) {
 }
 
 
+void PrintJSONValue( const Json::Value &val )
+{
+    if( val.isString() ) {
+        printf( "string(%s)", val.asString().c_str() ); 
+    } else if( val.isBool() ) {
+        printf( "bool(%d)", val.asBool() ); 
+    } else if( val.isInt() ) {
+        printf( "int(%d)", val.asInt() ); 
+    } else if( val.isUInt() ) {
+        printf( "uint(%u)", val.asUInt() ); 
+    } else if( val.isDouble() ) {
+        printf( "double(%f)", val.asDouble() ); 
+    }
+    else 
+    {
+        printf( "unknown type=[%d]", val.type() ); 
+    }
+}
+
+bool PrintJSONTree( const Json::Value &root, unsigned short depth /* = 0 */) 
+{
+    depth += 1;
+    printf( " {type=[%d], size=%d}", root.type(), root.size() ); 
+
+    if( root.size() > 0 ) {
+        printf("\n");
+        for( Json::ValueConstIterator itr = root.begin() ; itr != root.end() ; itr++ ) {
+            // Print depth. 
+            for( int tab = 0 ; tab < depth; tab++) {
+               printf("-"); 
+            }
+            printf(" subvalue(");
+            PrintJSONValue(itr.key());
+            printf(") -");
+            PrintJSONTree( *itr, depth); 
+        }
+        return true;
+    } else {
+        printf(" ");
+        PrintJSONValue(root);
+        printf( "\n" ); 
+    }
+    return true;
+}
+
+
 //-----------------------------------------------------------------------------
 // <getJSONvalue>
 // Just extracts a string from a group of settings. Return empty string if unfound
@@ -473,9 +583,8 @@ void OnNotification (Notification const* _notification, void* _context)
 {
 	ValueID id = _notification->GetValueID();
 	string valueStr;
-	string command;
 	string url;
-	int n=0;
+	string command;
 	Json::StyledWriter writer;
 	Json::Value *jsonval = (Json::Value *)_context;
 	string transport = string(getJSONvalue(*jsonval,string("CommandTransport")));
@@ -484,6 +593,8 @@ void OnNotification (Notification const* _notification, void* _context)
 	string homeid = string(getJSONvalue(*jsonval,string("HomeID")));
 	std::ostringstream urlstr;
 	std::ostringstream commandstr;
+	std::ostringstream typestr;
+	std::ostringstream classstr;
 
 	switch (_notification->GetType()) {
 		case Notification::Type_ValueAdded:
@@ -520,12 +631,31 @@ void OnNotification (Notification const* _notification, void* _context)
 					valueStr.c_str(), units.c_str());
 			  urlstr << transport << "://" << server << ":" << port << "/zwavereading";
 			  url = urlstr.str();
+			  //typestr << "TYPE string: " << Manager::Get()->GetNodeDeviceTypeString(_notification->GetHomeId(), _notification->GetNodeId())
+ 			//	<< "; TYPE number:" << Manager::Get()->GetNodeDeviceType(_notification->GetHomeId(), _notification->GetNodeId())
+			//	<< "; Generic TYPE:" << Manager::Get()->GetNodeGeneric(_notification->GetHomeId(), _notification->GetNodeId())
+			//	<< "; Generic TYPE:" << Manager::Get()->GetNodeSpecific(_notification->GetHomeId(), _notification->GetNodeId())
+			//	<< "; Human Readable TYPE:" << Manager::Get()->GetNodeType(_notification->GetHomeId(), _notification->GetNodeId());
+
+			  typestr << Manager::Get()->GetNodeType(_notification->GetHomeId(), _notification->GetNodeId());
+			  classstr << cclassStr(id.GetCommandClassId());
+			  // this would seem like the obvious place to catch a wake up but it only happens once - on the first report..
+			  //if (typestr.str().compare("Simple Meter")==0 && classstr.str().compare("WAKE UP")==0) {
+			  //std::cout << "\nWe have a simple meter - request a value" << "\n";
+			  //pthread_mutex_lock(&nlock);
+			  //nodes[_notification->GetNodeId()]->requestValue(id);
+			  //pthread_mutex_unlock(&nlock);
+			  //commandstr << "meter get -i -X POST -H 'Content-Type: application/json' -d '{\"home_id\":\"" << homeid << "\",\"sensorbox_address\":\"" << std::to_string(_notification->GetNodeId()) << "\",\"genre\":\"" << valueGenreStr(id.GetGenre()) << "\",\"class\":\"" << cclassStr(id.GetCommandClassId()) << "\",\"valuetype\":\"" << valueTypeStr(id.GetType()) << "\",\"timestamp\":" << std::time(nullptr) <<",\"value\":\"" << valueStr.c_str() <<"\",\"unit\":\"" << units.c_str() << "\"}' " << url;
+			  //std::cout << "\nValue Changed. Command: " << commandstr.str().c_str() << ".\n" << typestr.str().c_str() << "\n";
+			  //system(commandstr.str().c_str());
+			  //} else {
+
 			  commandstr << "curl -i -X POST -H 'Content-Type: application/json' -d '{\"home_id\":\"" << homeid << "\",\"sensorbox_address\":\"" << std::to_string(_notification->GetNodeId()) << "\",\"genre\":\"" << valueGenreStr(id.GetGenre()) << "\",\"class\":\"" << cclassStr(id.GetCommandClassId()) << "\",\"valuetype\":\"" << valueTypeStr(id.GetType()) << "\",\"timestamp\":" << std::time(nullptr) <<",\"value\":\"" << valueStr.c_str() <<"\",\"unit\":\"" << units.c_str() << "\"}' " << url;
-			  command = commandstr.str();
-			  std::cout << "\nCommand: " << command.c_str() << ".\n";
+			  std::cout << "\nValue Changed. Command: " << commandstr.str().c_str() << ".\n" << typestr.str().c_str() << "\n";
 			  // fprintf(stdout, "\nCommand: '%s'\n", command.c_str());
 
-			  system(command.c_str());
+			  system(commandstr.str().c_str());
+			  //}
 			}
 			pthread_mutex_lock(&nlock);
 			nodes[_notification->GetNodeId()]->saveValue(id);
@@ -619,12 +749,13 @@ void OnNotification (Notification const* _notification, void* _context)
 			Manager::Get()->GetValueAsString(id,&valueStr);
 			urlstr << transport << "://" << server << ":" << port << "/zwavereading";
 			url = urlstr.str();
+			typestr << "TYPE" << Manager::Get()->GetNodeDeviceTypeString(_notification->GetHomeId(), _notification->GetNodeId());
 			commandstr << "curl -i -X POST -H 'Content-Type: application/json' -d '{\"home_id\":\"" << homeid << "\",\"sensorbox_address\":\"" << std::to_string(_notification->GetNodeId()) << "\",\"genre\":\"" << valueGenreStr(id.GetGenre()) << "\",\"class\":\"" << cclassStr(id.GetCommandClassId()) << "\",\"valuetype\":\"" << valueTypeStr(id.GetType()) << "\",\"timestamp\":" << std::time(nullptr) <<",\"value\":\"" << valueStr.c_str() << "\"}' " << url;
-			command = commandstr.str();
-			std::cout << "\nCommand: " << command.c_str() << ".\n";
+			//command = commandstr.str();
+			std::cout << "\nNode Event Command: " << commandstr.str().c_str() << ".\n" << typestr.str().c_str() << "\n";
 			// fprintf(stdout, "\nCommand: '%s'\n", command.c_str());
 
-			system(command.c_str());
+			system(commandstr.str().c_str());
 			pthread_mutex_lock(&nlock);
 			nodes[_notification->GetNodeId()]->saveValue(id);
 			pthread_mutex_unlock(&nlock);
@@ -760,18 +891,30 @@ void OnNotification (Notification const* _notification, void* _context)
 					noop = true;
 					pthread_mutex_unlock(&glock);
 					break;
-				case Notification::Code_Awake:
+				// we DON'T get this from NQ9121 meters every 15 mins 
+				case Notification::Code_Awake:  
 					Log::Write(LogLevel_Info, "Notification: Notification home %08x node %d Awake",
 							_notification->GetHomeId(), _notification->GetNodeId());
 					pthread_mutex_lock(&nlock);
+					typestr << Manager::Get()->GetNodeType(_notification->GetHomeId(), _notification->GetNodeId());
+			  		if (typestr.str().compare("Simple Meter")==0) {
+					  std::cout << "\nWakeup for simple meter - request a value" << "\n";
+					  //nodes[_notification->GetNodeId()]->requestValue(id);
+					}
 					nodes[_notification->GetNodeId()]->setTime(time(NULL));
 					nodes[_notification->GetNodeId()]->setChanged(true);
 					pthread_mutex_unlock(&nlock);
 					break;
+				// we DO get this from NQ9121 meters every second wakeup - this seems to be the only reliable notification..
 				case Notification::Code_Sleep:
 					Log::Write(LogLevel_Info, "Notification: Notification home %08x node %d Sleep",
 							_notification->GetHomeId(), _notification->GetNodeId());
 					pthread_mutex_lock(&nlock);
+					typestr << Manager::Get()->GetNodeType(_notification->GetHomeId(), _notification->GetNodeId());
+			  		if (typestr.str().compare("Simple Meter")==0) {
+					  std::cout << "\nSleep for simple meter - request a value maybe?" << "\n";
+					  nodes[_notification->GetNodeId()]->requestValue(id);
+					}
 					nodes[_notification->GetNodeId()]->setTime(time(NULL));
 					nodes[_notification->GetNodeId()]->setChanged(true);
 					pthread_mutex_unlock(&nlock);
