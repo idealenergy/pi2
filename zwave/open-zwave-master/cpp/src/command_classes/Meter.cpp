@@ -201,6 +201,7 @@ bool Meter::RequestValue
 			value->Release();
 			Msg* msg = new Msg( "MeterCmd_Get", GetNodeId(), REQUEST, FUNC_ID_ZW_SEND_DATA, true, true, FUNC_ID_APPLICATION_COMMAND_HANDLER, GetCommandClassId() );
 			msg->SetInstance( this, _instance );
+
 			msg->Append( GetNodeId() );
 			msg->Append( 3 );
 			msg->Append( GetCommandClassId() );
