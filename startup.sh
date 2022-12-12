@@ -1,17 +1,3 @@
-echo "" > /etc/modprobe.d/raspi-blacklist.conf
-BASEDIR=$(dirname $0)
-nohup bash $BASEDIR/util/deps.sh &> $BASEDIR/util/deps.log &
-sleep 5
-sudo modprobe i2c-dev
-sudo modprobe i2c-bcm2708
-sleep 5
-sudo modprobe i2c-dev
-sudo modprobe i2c-bcm2708
-sleep 5
-ls /dev/i2c*
-cat /etc/modules
-lsmod
-sudo i2cdetect -y 1
 cd /home/pi/pi
 upgradeflag=/home/pi/ideal.upgrade
 #if [ $? -ne 0 ]; then
@@ -26,4 +12,4 @@ if [ -f $upgradeflag ]; then
     sudo rm $upgradeflag
 fi
 . $HOME/.profile
-node server.js
+node ideal_server.js

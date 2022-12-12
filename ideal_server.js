@@ -1,13 +1,15 @@
-//var request = require('request');
 var request = require('request-json');
 var async = require('async');
 var childProcess = require('child_process');
 var zlib = require('zlib');
 var fs = require('fs');
+var exec = require('child_process').exec;
+
+const mqtt = require('mqtt');
 
 var common = require('./common')
 
-var piGlow = require('piglow');
+//var piGlow = require('piglow');
 
 var config = common.config();
 
@@ -17,6 +19,7 @@ var IDEAL_SOFTWARE_UPGRADE_FLAG="/home/pi/ideal.upgrade";
 var BIGSMALL_FLAG="/home/pi/bigsmall";
 var OEM_IP="/home/pi/oem_ip";
 var OEM_API="/home/pi/oem_api";
+
 
 if (process.getuid) {
   console.log('Current uid: ' + process.getuid());
@@ -47,6 +50,8 @@ if (config.piglow) {
   });
 }
 
+/*
+Piglow library not updated and insecure / no replacement available - run without lights for now
 setInterval(function(){
   if ('undefined' !== typeof piglow) {
     piglow.startTransaction();
@@ -76,19 +81,30 @@ setInterval(function(){
   }
 }, 35);
 
-//currentLED = 0;
-
 setInterval(function(){
   LEDs[0] = maxLEDvalue;
 //  currentLED = ((currentLED + 1) % 16)
 }, 1000);
+*/
+
+function execute (command,callback) {
+   exec(command, function(error,stdout,stderr) { callback(stdout); });
+};
 
 const HomeOffset = 0;
 const BaseStationAddress = process.env.RESIN_DEVICE_UUID;
 config['basestationID'] = process.env.RESIN_DEVICE_UUID;
 var JSONcount=0;
+var secondselapsed=0;
+var bufferstart=0;
 var JSONbuffer=[];
 var homeID="unknown";
+var ID_30A=1;
+var ID_100A=2;
+var firstReadingReceived=-1;
+var ELECTRIC_SCALING_RMS_100A=0.0351562;
+var ELECTRIC_SCALING_RMS_30A=0.0105469;
+var UK_VOLTAGE=230;
 
 console.log(config.IDEALServer);
 console.log(config.JSONbuffersize);
@@ -96,12 +112,28 @@ var IDEALJSONClient = request.createClient(config.IDEALServer);
 var PingClient = request.createClient(config.CommandTransport+"://"+config.CommandServer+":"+config.CommandPort);
 //var IDEALJSONClient = request(config.IDEALServer);
 
-var serialport = require("serialport")
-var SerialPort = serialport.SerialPort
-var serialPort = new SerialPort(config.SerialPort, {
-  baudrate: 38400,
-  parser: serialport.parsers.readline("\n")
-});
+// READ FROM HAT (or other source depending on config
+const { SerialPort } = require('serialport');
+const { ReadlineParser } = require('@serialport/parser-readline');
+var port = new SerialPort({ path: config.SerialPort, baudRate: 38400 })
+const parser = port.pipe(new ReadlineParser({delimeter:'\r\n'}))
+
+var mqttclient;
+if (config.mqtt) {
+  // CONNECT to MQTT broker specified in config
+
+  mqttclient = mqtt.connect(config.mqttBroker);
+  console.log('connected to MQTT broker at '+config.mqttBroker);
+}
+
+function setupTimedBuffer() {
+  console.log('Setup timer');
+  setInterval(function(){
+     console.log('Send buff timer');
+     sendBuffer(JSONbuffer);
+    //  currentLED = ((currentLED + 1) % 16)
+   }, config['JSONbuffertime']*1000);
+}
 
 function sendJSON(data) {
   if (data && data.home_id && !(data.home_id===undefined) && !(data.home_id=='undefined')) {
@@ -111,14 +143,19 @@ function sendJSON(data) {
 	var result=executeShellCommand(cmd); // set prompt
         console.log(cmd);
 	cmd = "echo \""+data.home_id+"\" > ~/home_id";
-	var result=executeShellCommand(cmd); // set prompt
+	var result=executeShellCommand(cmd); // write home_id file
         console.log(cmd);
     }
     homeID=data.home_id;
-  }  
-  if (config['JSONbuffersize']) {
+    if (config['JSONbuffertime']) {
+	JSONbuffer.push(data)
+	if (firstReadingReceived==-1) {
+	    setupTimedBuffer();
+	    firstReadingReceived=1;
+	}
+    } else if (config['JSONbuffersize']) {
 	sendJSONbuffered(data);
-  } else {
+    } else {
      console.log(JSON_data);
      IDEALJSONClient.post( 'jsonreading/', data, function (err, res, body) {
 
@@ -129,47 +166,156 @@ function sendJSON(data) {
 	  console.log("body JSON: "+JSON.stringify(body));
 	}
       }
-  });
+    });
+   }
   }
+}
+
+// turn 2 1-second streams of electrical current data into a single 10-second power stream
+// Q: what to do with battery data / any other data that has been received?
+// Q: how do we know which clip is being used? A: we don't so we will need to make assumptions / work it out
+function aggregate(data) {
+   var readings = data.readings;
+   var readlength = readings.length;
+   if (readlength==0) {
+      return { };
+   }
+   var lastread = readings[readlength-1];
+   var lasttime = lastread.timestamp;
+   var only_electric_power = readings.filter( element => element.rms_current>0 )
+   // here we group by node ID so we're separating the 30A and 100A clamp signals.
+   groupedvals = Object.values(only_electric_power.reduce((a, { node_id, rms_current }) => {
+	if (!a[node_id]) a[node_id] = { node_id, rms_current_total: 0, rms_count: 0 }
+        a[node_id].rms_current_total+=rms_current; a[node_id].rms_count+=1;
+        return a;
+       },{}));
+   var chosenpower=0;
+
+   for (var i=0; i<groupedvals.length; i++) {
+      groupedvals[i].mean=groupedvals[i].rms_current_total /  groupedvals[i].rms_count;
+      if (groupedvals[i].node_id==ID_30A) { groupedvals[i].ampage=30; groupedvals[i].scaledcurrent=groupedvals[i].mean*ELECTRIC_SCALING_RMS_30A; }
+      else { groupedvals[i].ampage=100; groupedvals[i].scaledcurrent=groupedvals[i].mean*ELECTRIC_SCALING_RMS_100A; }
+      groupedvals[i].power = groupedvals[i].scaledcurrent * UK_VOLTAGE; // this is where measuring voltage would be useful!
+      groupedvals[i].energyinjoules = groupedvals[i] * config.JSONbuffertime;
+      if (groupedvals.length==1) { chosenpower=groupedvals[i].power; }
+      else if (groupedvals[i].power<4000 && groupedvals[i].ampage==30) { chosenpower=groupedvals[i].power; }
+      else if (groupedvals[i].power>=4000 && groupedvals[i].ampage==100) { chosenpower=groupedvals[i].power; }
+   }
+
+   // check validity of mappings!
+   if (groupedvals.length==2) {
+      console.log('check mappings');
+      var assignments_correct=0;
+      var node_for_30=0;
+      var node_for_100=0;
+      if (groupedvals[0].node_id==ID_30A && groupedvals[1].node_id==ID_100A) {
+         if (groupedvals[0].mean > groupedvals[1].mean) {
+            assignments_correct=1;
+         } else {
+	    assignments_correct=-1
+            node_for_30=groupedvals[1].node_id;
+	    node_for_100=groupedvals[0].node_id;
+         }
+      } else if (groupedvals[1].node_id==ID_30A || groupedvals[0].node_id==ID_100A) {
+         if (groupedvals[1].mean > groupedvals[0].mean) {
+            assignments_correct=1;
+         } else {
+	    assignments_correct=-1
+            node_for_30=groupedvals[0].node_id;
+	    node_for_100=groupedvals[1].node_id;
+         }
+      } else if (groupedvals[0].mean>groupedvals[1].mean) {
+	    assignments_correct=-1
+            node_for_30=groupedvals[0].node_id;
+	    node_for_100=groupedvals[1].node_id;           
+      } else {
+	    assignments_correct=-1
+            node_for_30=groupedvals[1].node_id;
+	    node_for_100=groupedvals[0].node_id;
+      }
+      if (assignments_correct==-1) {
+	console.log("mappings are wrong!");
+        ID_30A=node_for_30;
+        ID_100A=node_for_100;
+      } else {
+	console.log("mappings are correct");
+      }
+   }   
+   console.log(groupedvals);
+   //console.log("chosen power: "+chosenpower);
+   //var comm = "sudo echo \""+val+"\" > "+NODEID_30A;
+   //var result=executeShellCommand(comm); // flag
+   //const groups = readings.groupBy(readings,"nodeid");
+   //console.log("Group by "+groups);
+   var powerJSON = { "homeid": homeID, "timestamp": lasttime, "power": chosenpower, "numreads": readlength };
+   console.log(powerJSON);
+   return powerJSON;
+}
+
+function aggregateIfRequired(data) {
+   if (config.AggregatePower) {
+     return JSON.stringify(aggregate(data));
+   } else {
+     return JSON.stringify(data);
+   }
 }
 
 function sendJSONbuffered(data) {
    JSONbuffer.push(data);
+
+   if (bufferstart==0 || JSONcount==0) {
+     bufferstart=data.timestamp
+   } 
    JSONcount++;
+
    if (JSONcount>=config.JSONbuffersize) {
-     console.log("Send buffer");
+     sendBuffer();
+   }
+}
+
+
+function sendBuffer() {
+     console.log("Send buffer ");
      var JSONdata = {
       "readings": JSONbuffer
      }
+     if (config.compress) {
+       console.log(" ...compress... ");
 
-   if (config.compress) {
-     console.log(" ...compress... ");
-
-     // this nextTick means we can postpone execution of compress. It fixes 
-     // the problem with a small memory leak on zlib.deflate
-     process.nextTick(function() {
-     zlib.deflate(JSON.stringify(JSONdata), function(err, buffer) {
-       if (!err) {
-	 IDEALJSONClient.post( 'jsonreadings/', buffer, function (err, res, body) {
-         //IDEALJSONClient.post( 'jsonreadings/', JSONdata, function (err, res, body) {
+       // this nextTick means we can postpone execution of compress. It fixes 
+       // the problem with a small memory leak on zlib.deflate
+       process.nextTick(function() {
+         zlib.deflate(JSON.stringify(JSONdata), function(err, buffer) {
+           if (!err) {
+	     if (config.mqtt) {
+               console.log('SEND MQTT');
+	       mqttclient.publish(homeID+'/ideal_compressed',aggregateIfRequired(JSONdata));
+	     } else {
+	       IDEALJSONClient.post( 'jsonreadings/', buffer, function (err, res, body) {
+               //IDEALJSONClient.post( 'jsonreadings/', JSONdata, function (err, res, body) {
+                 if(res) {
+                   console.log(err);
+                   console.log({"statusCode": res.statusCode});
+                 }
+               });
+	     }
+           } else {
+	     console.log("Compression error: " + err);
+           }
+         })
+       });
+     } else {
+       if (config.mqtt) {
+         mqttclient.publish('ideal',aggregateIfRequired(JSONdata));
+       } else {
+         IDEALJSONClient.post( 'jsonreadings/', JSONdata, function (err, res, body) {
            if(res) {
              console.log(err);
              console.log({"statusCode": res.statusCode});
            }
          });
-       } else {
-	  console.log("Compression error: " + err);
        }
-     })
-     });
-   } else {
-       IDEALJSONClient.post( 'jsonreadings/', JSONdata, function (err, res, body) {
-         if(res) {
-           console.log(err);
-           console.log({"statusCode": res.statusCode});
-         }
-       });
-   }
+     }
      // These resets belong outside of the callback because we need to be 
      // able to handle more calls before the post returns. However... what 
      // if we don't get a 200 response? Buffering indefinitely is too much, 
@@ -177,14 +323,14 @@ function sendJSONbuffered(data) {
      // data. Certainly adds complication - leave it for now (JK 10/9/2015)
      JSONbuffer=[];
      JSONcount=0;
-  }
+  
 }
 
-console.log('about to open serial port');
+console.log('about to open serial port'+config.SerialPort);
 
-serialPort.on("open", function () {
-  console.log('serialPort.open');
-  serialPort.on('data', function(data) {
+//parser.on("open", function () {
+//  console.log('serialPort.open');
+  parser.on('data', function(data) {
     console.log('data received : ' + data);
     try {
       js_data = JSON.parse(data);
@@ -192,7 +338,7 @@ serialPort.on("open", function () {
       return;
     }
     JSON_data = {
-      "sensorbox_address": js_data.node_id + config.homeOffset,
+      "node_id": js_data.node_id + config.homeOffset,
       "home_id": js_data.home_id,
       "timestamp": (Date.now())/100,
       "timeinterval": 60
@@ -246,9 +392,9 @@ serialPort.on("open", function () {
         break;
     }
   });
-});
+//});
 
-serialPort.on("error", function (_error) {
+parser.on("error", function (_error) {
     console.log("Serial Port error: " + _error)
 })
 
@@ -267,7 +413,7 @@ process.on('uncaughtException', function(err) {
 // this sort of ping and would potentially allow it to live on a different server.
 // Every PINGDELAY seconds we send a 
 
-var PINGDELAY=5; 
+var PINGDELAY=20; 
 
 // execute a shell command. 
 function executeShellCommand(command) {
@@ -297,6 +443,9 @@ function executeShellCommandStdin(command) {
 
 var stdin=null;
 
+
+
+/* This was a check-in to the server every so often - not required
 var id = setInterval(function() {
      console.log("Hello from "+homeID);
      var JSONdata=[];
@@ -318,7 +467,7 @@ var id = setInterval(function() {
 		console.log("Ping response "+ command);
 		switch (command) {
 		  case "login":
-		    var comm = "ssh -o StrictHostKeyChecking=no -p "+ config.SSHtunnelPort + " -R 3100:localhost:22 " + config.SSHtunnelUser + "@" + config.CommandServer;
+		    var comm = "ssh -p "+ config.SSHtunnelPort + " -R 3100:localhost:22 " + config.SSHtunnelUser + "@" + config.CommandServer;
 		    console.log(comm);
 		    stdin=executeShellCommandStdin(comm);
 		    break;
@@ -382,4 +531,4 @@ var id = setInterval(function() {
      });
    });
 }, (PINGDELAY * 1000));
-
+*/
