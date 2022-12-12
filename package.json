@@ -1,23 +1,9 @@
 {
-  "name": "pi",
-  "description": "IDEAL basestation scripts",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/idealenergy/pi.git"
-  },
-  "scripts": {
-    "start": "bash startup.sh"
-  },
-  "version": "0.1.0",
   "dependencies": {
-    "request-json": "~0.5.3",
-    "async": "~1.4.2",
-    "serialport": "~1.6.1",
-    "request": "~2.63.0",
-    "piglow": "~2.2.2",
-    "forever-monitor": "~1.6.0"
-  },
-  "engines": {
-      "node": "~0.12.06"
+    "async": "^3.2.4",
+    "child_process": "^1.0.2",
+    "mqtt": "^4.3.7",
+    "request-json": "^0.6.5",
+    "serialport": "^10.5.0"
   }
 }
