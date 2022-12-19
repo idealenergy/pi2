@@ -1,5 +1,5 @@
 #! /bin/sh
-# /etc/init.d/ideal
+# /home/pi/pi/ideal.sh
 #
 
 # Sys-V startup script for ideal process (JK 25/8/2015)
@@ -13,7 +13,8 @@ while [ $inet != 1 ] ; do
   sleep 5
 done 
 
-IDEAL_PID_FILE=/var/run/ideal.pid
+THIS_FILE=/home/pi/pi/ideal.sh
+IDEAL_PID_FILE=/home/pi/ideal.pid
 IDEAL_START_COMMAND=/home/pi/pi/startup.sh
 # change this if you want to have a log file
 IDEAL_LOG=/dev/null
@@ -35,7 +36,10 @@ case "$1" in
         echo "ideal process already running (if not - check / delete $IDEAL_PID_FILE)"
     else
         echo "Starting script ideal "
-        sudo -H -u pi sh $IDEAL_START_COMMAND > $IDEAL_LOG 2>&1 & echo $! > $IDEAL_PID_FILE
+        # sudo -H -u pi sh $IDEAL_START_COMMAND > $IDEAL_LOG 2>&1 & echo $! > $IDEAL_PID_FILE
+        #echo sh $IDEAL_START_COMMAND > $IDEAL_LOG 2>&1 & echo $! > $IDEAL_PID_FILE
+        echo "sh $IDEAL_START_COMMAND > $IDEAL_LOG 2>&1 & echo $! > $IDEAL_PID_FILE"
+        sh $IDEAL_START_COMMAND > $IDEAL_LOG 2>&1 & echo $! > $IDEAL_PID_FILE
     fi
     ;;
   stop)
@@ -46,6 +50,7 @@ case "$1" in
         set -- junk $pg
         shift
         # terminate the process group and delete the PID file
+        echo "pkill -TERM -g $2"
         pkill -TERM -g $2
         rm $IDEAL_PID_FILE
     else 
@@ -53,11 +58,11 @@ case "$1" in
     fi
     ;;
   restart)
-    $0 stop
-    $0 start
+    $THIS_FILE stop
+    $THIS_FILE start
     ;;
   *)
-    echo "Usage: /etc/init.d/ideal {start|stop|restart}"
+    echo "Usage: /home/pi/pi/ideal.sh {start|stop|restart}"
     exit 1
     ;;
 esac
