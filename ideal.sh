@@ -1,5 +1,5 @@
 #! /bin/sh
-# /home/pi/pi/ideal.sh
+# /home/blackwood/pi2/ideal.sh
 #
 
 # Sys-V startup script for ideal process (JK 25/8/2015)
@@ -13,13 +13,13 @@ while [ $inet != 1 ] ; do
   sleep 5
 done 
 
-THIS_FILE=/home/pi/pi/ideal.sh
-IDEAL_PID_FILE=/home/pi/ideal.pid
-IDEAL_START_COMMAND=/home/pi/pi/startup.sh
+THIS_FILE=/home/blackwood/pi2/ideal.sh
+IDEAL_PID_FILE=/home/blackwood/ideal.pid
+IDEAL_START_COMMAND=/home/blackwood/pi2/startup.sh
 # change this if you want to have a log file
 IDEAL_LOG=/dev/null
 # don't have a log file for production - only for debug
-#IDEAL_LOG=/home/pi/pi/LOG
+#IDEAL_LOG=/home/blackwood/pi2/LOG
 
 # Simple start and stop commands for ideal process
 case "$1" in
@@ -62,7 +62,7 @@ case "$1" in
     $THIS_FILE start
     ;;
   *)
-    echo "Usage: /home/pi/pi/ideal.sh {start|stop|restart}"
+    echo "Usage: /home/blackwood/pi2/ideal.sh {start|stop|restart}"
     exit 1
     ;;
 esac

@@ -14,11 +14,11 @@ var common = require('./common')
 var config = common.config();
 
 // This is hard-wired and not configurable because it's used in the startup script
-var IDEAL_SOFTWARE_UPGRADE_FLAG="/home/pi/ideal.upgrade";
+var IDEAL_SOFTWARE_UPGRADE_FLAG="/home/blackwood/ideal.upgrade";
 // This one is an indicator to say we're running bigsmall mode
-var BIGSMALL_FLAG="/home/pi/bigsmall";
-var OEM_IP="/home/pi/oem_ip";
-var OEM_API="/home/pi/oem_api";
+var BIGSMALL_FLAG="/home/blackwood/bigsmall";
+var OEM_IP="/home/blackwood/oem_ip";
+var OEM_API="/home/blackwood/oem_api";
 
 
 if (process.getuid) {
@@ -449,7 +449,7 @@ var stdin=null;
 var id = setInterval(function() {
      console.log("Hello from "+homeID);
      var JSONdata=[];
-     fs.readFile("/home/pi/sysinfo", function(err,data) {
+     fs.readFile("/home/blackwood/sysinfo", function(err,data) {
 	if (err || data=="") {
 	   JSONdata={ "home_id": homeID };
         } else {

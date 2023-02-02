@@ -1,5 +1,5 @@
-cd /home/pi/pi
-upgradeflag=/home/pi/ideal.upgrade
+cd /home/blackwood/pi2
+upgradeflag=/home/blackwood/ideal.upgrade
 #if [ $? -ne 0 ]; then
 #    shutdown -r now
 #fi
