@@ -7,11 +7,11 @@
 # Wait for internet to be fully working! This is important to allow 
 # reinstall of i2c and allow git pull to work (if it's necessary) 
 
-inet=-1
-while [ $inet != 1 ] ; do
-  ping -q -w 1 -c 1 `ip r | grep default | cut -d ' ' -f 3` > /dev/null && inet=1
-  sleep 5
-done 
+# inet=-1
+# while [ $inet != 1 ] ; do
+#  ping -q -w 1 -c 1 `ip r | grep default | cut -d ' ' -f 3` > /dev/null && inet=1
+#  sleep 5
+# done 
 
 THIS_FILE=/home/blackwood/pi2/ideal.sh
 IDEAL_PID_FILE=/home/blackwood/ideal.pid
