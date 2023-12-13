@@ -1,0 +1,64 @@
+{
+  "development": {
+      "SerialPort": "/dev/ttyAMA0",
+      "IDEALServer": "https://idealdb.inf.ed.ac.uk:3002/",
+      "CommandServer": "idealdb.inf.ed.ac.uk",
+      "CommandTransport": "https",
+      "CommandPort": 3002,
+      "SSHtunnelPort": 3010,
+      "SSHtunnelUser": "ideal",
+      "homeOffset": 0,
+      "piglow": 0,
+      "JSONbuffersize": 15,
+      "compress": 1
+  },
+  "production": {
+      "SerialPort": "/dev/ttyAMA0",
+      "IDEALServer": "https://idealdb.inf.ed.ac.uk:3000/",
+      "CommandServer": "idealdb.inf.ed.ac.uk",
+      "CommandTransport": "https",
+      "CommandPort": 3000,
+      "SSHtunnelPort": 3010,
+      "SSHtunnelUser": "ideal",
+      "homeOffset": 0,
+      "piglow": 0,
+      "JSONbuffersize": 15,
+      "compress": 1
+  },
+  "mqtt": {
+      "SerialPort": "/dev/ttyAMA0",
+      "IDEALServer": "https://idealdb.inf.ed.ac.uk:3000/",
+      "CommandServer": "idealdb.inf.ed.ac.uk",
+      "CommandTransport": "https",
+      "CommandPort": 3000,
+      "SSHtunnelPort": 3010,
+      "SSHtunnelUser": "ideal",
+      "homeOffset": 0,
+      "piglow": 0,
+      "JSONbuffersize": 20,
+      "JSONbuffertime": 10,
+      "compress": 0,
+      "mqtt": 1,
+      "mqttBroker": "mqtt://localhost",
+      "localmqttBroker": "mqtt://localhost",
+      "AggregatePower": 1,
+      "savetodisk": "/home/blackwood/datasafe.json"
+  },
+  "nigel": {
+      "SerialPort": "/dev/ttyUSB0",
+      "IDEALServer": "http://idealdb.inf.ed.ac.uk:3000/",
+      "CommandServer": "idealdb.inf.ed.ac.uk",
+      "CommandPort": 3000,
+      "SSHtunnelPort": 3010,
+      "SSHtunnelUser": "ideal",
+      "homeOffset": 0,
+      "piglow": 0
+  },
+  "radiotest": {
+      "SerialPort": "/dev/ttyAMA0",
+      "IDEALServer": "http://idealdb.inf.ed.ac.uk:3002/",
+      "homeOffset": 0,
+      "logentries_token": "fc8f06cf-0862-489e-8c29-318d8514f7ae",
+      "piglow": 1
+  }
+}
