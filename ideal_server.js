@@ -4,6 +4,9 @@ var childProcess = require('child_process');
 var zlib = require('zlib');
 var fs = require('fs');
 var exec = require('child_process').exec;
+//const jsonfile = require('jsonfile')
+const fsPromises = require('fs').promises
+
 
 const mqtt = require('mqtt');
 
@@ -98,6 +101,12 @@ var JSONcount=0;
 var secondselapsed=0;
 var bufferstart=0;
 var JSONbuffer=[];
+var nbufferstart=0;
+var nJSONbuffer=[];
+var SaveBufferSize=50;
+var SaveBufferCount=0;
+var SaveJSONBuffer=[];
+
 var homeID="unknown";
 var ID_30A=1;
 var ID_100A=2;
@@ -273,6 +282,29 @@ function sendJSONbuffered(data) {
    }
 }
 
+function saveJSONbuffered(data) {
+   SaveJSONBuffer.push(data);
+   SaveBufferCount++;
+   thedate=new Date()
+   datestring=thedate.toISOString().split('T')[0]
+
+   if (SaveBufferCount>=SaveBufferSize) {
+      fsPromises.writeFile(config.savetodisk+'_'+datestring+'.json', JSON.stringify(SaveJSONBuffer), { flag: 'a' })
+	.then(() => {
+	    console.log("Saved data");
+            SaveBufferCount=0;
+            SaveJSONBuffer=[];
+        })
+        .catch(err => {
+            console.error(err);
+            SaveBufferCount=0;
+            SaveJSONBuffer=[];
+        });
+       // stop possibility of trying to write file every time a new packet arrives when previous write not complete.
+       // Obviously we may lose data in this case but otherwise we risk multiple attempts to write at the same time.
+       SaveBufferCount=0;
+   }
+}
 
 function sendBuffer() {
      console.log("Send buffer ");
@@ -314,6 +346,17 @@ function sendBuffer() {
              console.log({"statusCode": res.statusCode});
            }
          });
+       }
+       if (config.savetodisk) {
+          var non_electric_data = JSONbuffer.filter( element => !(element.rms_current>0) )
+          var non_light_data = non_electric_data.filter( element => !(element.light>=0) )
+	  //var non_electric_data = JSONbuffer.filter( element => element.packet_type!=3 )
+	  if (non_light_data.length>0) {
+	    saveJSONbuffered(non_light_data);
+	    //jsonfile.writeFile(config.savetodisk, non_light_data, { flag: 'a' }, function (err) {
+	    //  if (err) console.error(err)
+	    //});
+          }
        }
      }
      // These resets belong outside of the callback because we need to be 
